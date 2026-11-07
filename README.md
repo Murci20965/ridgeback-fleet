@@ -70,7 +70,7 @@ Tables, views and design decisions are in [`docs/data_model.md`](docs/data_model
 - **Slash dates.** `10/09/2026` is day first, because that's the only reading inside the file's delivery window.
 - **Late rows.** A row may be up to 7 days older than its delivery date. Anything older, or on or after the delivery date, is rejected.
 - **Driver identity.** There's no driver ID, so a driver is their normalised full name. Two people with the same name would merge.
-- **Blank drivers.** 61 events other than Power Up have no driver, including 5 impacts. They stay unattributed and are shown as such, not assigned to whoever was logged on nearby.
+- **Blank drivers.** 19 impact, harsh and idle events have no driver, including 5 impacts. They stay unattributed and are shown as such, not assigned to whoever was logged on nearby.
 - **Meter resets.** A RunHours drop of over 1 hour is a reset. `FBA33639374813` resets twice on 8 Sep. Daily hours are summed across the pieces, so time lost in the gap around a reset isn't counted.
 - **Backward readings.** Smaller drops at shift changes are out-of-order readings, which the max-minus-min calculation absorbs.
 - **Harsh events.** These are harsh braking, harsh acceleration and speeding. Impacts and excess idle are reported separately.
