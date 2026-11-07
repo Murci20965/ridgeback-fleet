@@ -59,14 +59,14 @@ It loads each file in `data/incoming/` in date order, and running it again chang
 
 **`anthropic/claude-haiku-5.5`, falling back to `anthropic/claude-sonnet-5.5`, both through OpenRouter.**
 
-I compared both on [12 fixed questions](docs/model_evaluation.md) with answers known from a separate profile of the raw files: figures, a tie, a required caveat, unanswerable questions, a prompt injection and an off-topic request. Accuracy came first, then cost and speed.
+I compared both on [14 fixed questions](docs/model_evaluation.md) with answers known from a separate profile of the raw files: figures, a tie, a required caveat, partial machine references, unanswerable questions, a prompt injection and an off-topic request. Accuracy came first, then cost and speed.
 
 | Model | Passed | Avg tokens per question | Avg seconds per question | Price per million tokens, input / output |
 | --- | --- | --- | --- | --- |
-| Claude Haiku 5.5 | 12 of 12 | 5,302 | 11.1 | $0.10 / $0.50 |
-| Claude Sonnet 5.5 | 12 of 12 | 5,492 | 15.8 | $2.00 / $10.00 |
+| Claude Haiku 5.5 | 14 of 14 | 5,455 | 12.7 | $0.10 / $0.50 |
+| Claude Sonnet 5.5 | 14 of 14 | 5,408 | 14.7 | $2.00 / $10.00 |
 
-The job is choosing the right tool and phrasing a short answer from its result, and the guard checks every figure afterwards. Haiku matched Sonnet on accuracy at a twentieth of the price, so it fits a USD 10 cap, and it was slightly faster in this run. Sonnet also sometimes added commentary nobody asked for, which is a risk in a data assistant. Sonnet stays as the fallback because availability matters more than cost during an outage. Prices are from OpenRouter's model list on 7 Nov 2026, and 12 questions is a small sample.
+The job is choosing the right tool and phrasing a short answer from its result, and the guard checks every figure afterwards. Haiku matched Sonnet on accuracy at a twentieth of the price, so it fits a USD 10 cap, and it was slightly faster in this run. Sonnet also sometimes added commentary nobody asked for, which is a risk in a data assistant. Sonnet stays as the fallback because availability matters more than cost during an outage. Prices are from OpenRouter's model list on 7 Nov 2026, and 14 questions is a small sample.
 
 The guard earned its place during testing. Asked about `R88897`, Haiku correctly returned 8.11 and 13.87 hours, then added its own total of 22.98. The real total is 21.98. The guard rejected the figure, and the retry gave a clean answer.
 
