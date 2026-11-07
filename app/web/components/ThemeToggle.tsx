@@ -23,7 +23,7 @@ export function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label="Switch between light and dark theme"
-      className="pressable grid size-9 shrink-0 place-items-center rounded-lg border border-line bg-surface text-ink-2 hover:border-line-strong"
+      className="pressable grid size-9 shrink-0 place-items-center rounded-lg border border-white/15 text-[#d5dce6] hover:bg-white/10"
     >
       <Sun size={16} className="hidden dark-icon" aria-hidden />
       <Moon size={16} className="light-icon" aria-hidden />

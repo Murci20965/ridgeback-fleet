@@ -49,11 +49,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                 <>
                   <FilterBar coverage={data.coverage} />
                   <PendingFrame>
-                    <h2 className="mt-1 mb-2 text-sm font-semibold">
-                      {rangeLabel(data.from_date!, data.to_date!)}
-                    </h2>
-                    <KpiRow kpis={data.kpis} />
-                    <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                    <div className="mt-1 mb-4">
+                      <p className="text-[13px] text-ink-2">
+                        {rangeLabel(data.from_date!, data.to_date!)}
+                      </p>
+                      <h2 className="mt-0.5 max-w-4xl text-xl leading-snug font-semibold tracking-tight text-balance md:text-2xl">
+                        {data.headline}
+                      </h2>
+                    </div>
+                    <KpiRow
+                      kpis={data.kpis}
+                      daily={data.daily}
+                      weekStart={data.coverage.week_start}
+                      selectedDay={filters.day}
+                    />
+                    <div className="rise mt-4 grid gap-4 xl:grid-cols-2">
                       <AttentionList items={data.attention} />
                       <DriverTable drivers={data.drivers} />
                       <MachineHours machines={data.machines} isDay={Boolean(filters.day)} />

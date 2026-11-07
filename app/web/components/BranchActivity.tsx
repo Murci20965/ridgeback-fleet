@@ -1,8 +1,16 @@
 "use client";
 
 import { useMemo } from "react";
-import { Bar, BarChart, CartesianGrid, Cell, Tooltip, XAxis, YAxis } from "recharts";
-import { ResponsiveContainer } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { useFilters } from "@/components/FilterProvider";
 import { Panel } from "@/components/Panel";
 import { formatCount, formatHours, fullDay, shortWeekday, weekDays } from "@/lib/format";
@@ -76,28 +84,24 @@ export function BranchActivity({
     (branch) => !filters.branch || filters.branch === branch,
   );
 
+  // Every shown branch keeps a row, because these rows are also the chart's legend.
+  const rows = shownBranches
+    .map(
+      (branch) =>
+        branches.find((row) => row.branch === branch) ?? {
+          branch,
+          run_hours: 0,
+          active_machines: 0,
+          impacts: 0,
+          harsh: 0,
+        },
+    )
+    .sort((a, b) => b.run_hours - a.run_hours);
+
   return (
-    <Panel
-      title="Branch activity"
-      subtitle="Run hours per day. Select a day to focus on it."
-      className="xl:col-span-1"
-    >
-      {shownBranches.length > 1 && (
-        <ul className="mb-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-2" aria-label="Legend">
-          {shownBranches.map((branch) => (
-            <li key={branch} className="flex items-center gap-1.5">
-              <span
-                className="size-2.5 rounded-sm"
-                style={{ background: BRANCH_COLOUR[branch] }}
-                aria-hidden
-              />
-              {branch}
-            </li>
-          ))}
-        </ul>
-      )}
+    <Panel title="Branch activity" subtitle="Run hours per day. Select a day to focus on it.">
       <div
-        className="h-48"
+        className="h-56"
         role="img"
         aria-label="Stacked columns of run hours per day for each branch. The table below has the totals."
       >
@@ -129,7 +133,7 @@ export function BranchActivity({
                 maxBarSize={24}
                 fill={BRANCH_COLOUR[branch]}
                 stroke="var(--surface)"
-                strokeWidth={1}
+                strokeWidth={2}
                 radius={index === shownBranches.length - 1 ? [4, 4, 0, 0] : 0}
                 isAnimationActive={false}
                 cursor="pointer"
@@ -160,20 +164,26 @@ export function BranchActivity({
           </tr>
         </thead>
         <tbody className="divide-y divide-line border-t border-line tabular-nums">
-          {branches.map((row) => (
+          {rows.map((row) => (
             <tr key={row.branch}>
-              <th scope="row" className="py-1.5 text-left font-normal">{row.branch}</th>
-              <td className="py-1.5 text-right">{formatHours(row.run_hours)}</td>
-              <td className="py-1.5 text-right">{row.active_machines}</td>
-              <td className="py-1.5 text-right">{formatCount(row.impacts)}</td>
-              <td className="py-1.5 text-right">{formatCount(row.harsh)}</td>
+              <th scope="row" className="py-2 text-left font-normal">
+                <span className="flex items-center gap-2">
+                  <span
+                    className="size-2.5 rounded-sm"
+                    style={{ background: BRANCH_COLOUR[row.branch] }}
+                    aria-hidden
+                  />
+                  {row.branch}
+                </span>
+              </th>
+              <td className="py-2 text-right font-medium">{formatHours(row.run_hours)}</td>
+              <td className="py-2 text-right">{row.active_machines}</td>
+              <td className="py-2 text-right">{formatCount(row.impacts)}</td>
+              <td className="py-2 text-right">{formatCount(row.harsh)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {branches.length === 0 && (
-        <p className="mt-2 text-sm text-ink-2">No branch activity for this view.</p>
-      )}
     </Panel>
   );
 }

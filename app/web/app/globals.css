@@ -1,25 +1,33 @@
 @import "tailwindcss";
 
-/* Palette: validated categorical, status and chrome values. Dark values are selected for the
-   dark surface, not an automatic inversion. The media block covers the OS setting and the
+/* Colour carries meaning: blue is activity, orange is safety, red is only for critical items.
+   Chart colours are validated against these surfaces. Dark values are selected for the dark
+   surface, not an automatic inversion. The media block covers the OS setting and the
    data-theme block covers the toggle, which wins both ways. */
 :root {
   color-scheme: light;
-  --page: #f6f6f3;
-  --surface: #fcfcfb;
-  --surface-2: #f0efec;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #6f6d68;
-  --line: #e1e0d9;
-  --line-strong: #c3c2b7;
+  --page: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f5;
+  --ink: #101828;
+  --ink-2: #475467;
+  --muted: #667085;
+  --line: #e3e7ed;
+  --line-strong: #c7cdd6;
   --accent: #2a78d6;
   --accent-ink: #1c5cab;
-  --accent-wash: #e6f0fc;
+  --accent-wash: #e7f1fc;
   --on-accent: #ffffff;
   --critical: #d03b3b;
+  --critical-ink: #8f1f1f;
+  --critical-wash: #fdeeee;
   --warning: #b97f00;
   --good: #006300;
+  --activity: #2a78d6;
+  --activity-soft: #a9cdf4;
+  --safety: #d85a30;
+  --safety-soft: #f5c4b3;
+  --nav: #0f2238;
   --series-1: #2a78d6;
   --series-2: #eb6834;
   --series-3: #1baf7a;
@@ -29,21 +37,28 @@
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --surface-2: #262624;
-    --ink: #f0efec;
-    --ink-2: #c3c2b7;
-    --muted: #a3a29a;
-    --line: #2c2c2a;
-    --line-strong: #383835;
+    --page: #0b1017;
+    --surface: #131a24;
+    --surface-2: #1e2733;
+    --ink: #eef1f5;
+    --ink-2: #b4bdca;
+    --muted: #8f9aab;
+    --line: #263140;
+    --line-strong: #3a4759;
     --accent: #3987e5;
     --accent-ink: #86b6ef;
     --accent-wash: #16273d;
     --on-accent: #ffffff;
     --critical: #e66767;
+    --critical-ink: #f7c1c1;
+    --critical-wash: #3a1d20;
     --warning: #fab219;
     --good: #0ca30c;
+    --activity: #3987e5;
+    --activity-soft: #274a73;
+    --safety: #e0683a;
+    --safety-soft: #6b3a28;
+    --nav: #0e1621;
     --series-1: #3987e5;
     --series-2: #d95926;
     --series-3: #199e70;
@@ -53,21 +68,28 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d;
-  --surface: #1a1a19;
-  --surface-2: #262624;
-  --ink: #f0efec;
-  --ink-2: #c3c2b7;
-  --muted: #a3a29a;
-  --line: #2c2c2a;
-  --line-strong: #383835;
+  --page: #0b1017;
+  --surface: #131a24;
+  --surface-2: #1e2733;
+  --ink: #eef1f5;
+  --ink-2: #b4bdca;
+  --muted: #8f9aab;
+  --line: #263140;
+  --line-strong: #3a4759;
   --accent: #3987e5;
   --accent-ink: #86b6ef;
   --accent-wash: #16273d;
   --on-accent: #ffffff;
   --critical: #e66767;
+  --critical-ink: #f7c1c1;
+  --critical-wash: #3a1d20;
   --warning: #fab219;
   --good: #0ca30c;
+  --activity: #3987e5;
+  --activity-soft: #274a73;
+  --safety: #e0683a;
+  --safety-soft: #6b3a28;
+  --nav: #0e1621;
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
@@ -88,15 +110,21 @@
   --color-accent-wash: var(--accent-wash);
   --color-on-accent: var(--on-accent);
   --color-critical: var(--critical);
+  --color-critical-ink: var(--critical-ink);
+  --color-critical-wash: var(--critical-wash);
+  --color-activity: var(--activity);
+  --color-activity-soft: var(--activity-soft);
+  --color-safety: var(--safety);
+  --color-safety-soft: var(--safety-soft);
+  --color-nav: var(--nav);
   --color-warning: var(--warning);
   --color-good: var(--good);
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 body {
   background: var(--page);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 :focus-visible {
@@ -111,6 +139,29 @@ body {
 }
 [data-scrolling="true"] {
   scrollbar-color: var(--line-strong) transparent;
+}
+
+/* Sections rise in once on first load. Filter changes keep them in place, so this can't
+   get in the way of repeated use. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rise > * {
+    animation: rise 360ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+  .rise > :nth-child(2) {
+    animation-delay: 40ms;
+  }
+  .rise > :nth-child(3) {
+    animation-delay: 80ms;
+  }
+  .rise > :nth-child(4) {
+    animation-delay: 120ms;
+  }
 }
 
 /* Pressable things answer the press straight away. */

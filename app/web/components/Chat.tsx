@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, ChevronDown, Database, MessageCircle, RotateCcw, X } from "lucide-react";
+import { ArrowUp, ArrowUpRight, ChevronDown, Database, MessageCircle, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useChatBridge } from "@/components/ChatBridge";
 import { shortDate } from "@/lib/format";
@@ -219,11 +219,14 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
         onKeyDown={(event) => {
           if (event.key === "Escape") setPanelOpen(false);
         }}
-        className="chat-panel flex min-h-0 flex-col overflow-hidden rounded-xl border border-line bg-surface"
+        className="chat-panel flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(16,24,40,0.05)]"
       >
         <header className="flex items-center justify-between gap-2 border-b border-line py-2.5 pr-2 pl-4">
           <div className="min-w-0">
-            <h2 className="text-sm font-semibold">Ask about your fleet</h2>
+            <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+              <MessageCircle size={15} className="text-accent-ink" aria-hidden />
+              Ask about your fleet
+            </h2>
             {coverage && (
               <p className="text-xs text-ink-2">
                 Data from {shortDate(coverage.first_date)} to {shortDate(coverage.last_date)}
@@ -262,9 +265,10 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                   <li key={suggestion}>
                     <button
                       onClick={() => ask(suggestion)}
-                      className="pressable w-full rounded-lg border border-line px-3 py-2 text-left text-[13px] hover:border-line-strong hover:bg-surface-2"
+                      className="pressable flex w-full items-center justify-between gap-2 rounded-xl bg-surface-2 px-3 py-2.5 text-left text-[13px] hover:bg-accent-wash"
                     >
                       {suggestion}
+                      <ArrowUpRight size={14} className="shrink-0 text-ink-2" aria-hidden />
                     </button>
                   </li>
                 ))}
@@ -276,7 +280,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                 message.role === "user" ? (
                   <li
                     key={message.id}
-                    className="ml-8 justify-self-end rounded-xl bg-accent-wash px-3 py-2 text-sm break-words"
+                    className="ml-8 justify-self-end rounded-2xl rounded-br-md bg-accent px-3 py-2 text-sm break-words text-on-accent"
                   >
                     {message.text}
                   </li>

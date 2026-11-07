@@ -57,6 +57,14 @@ export interface BranchRow {
   harsh: number;
 }
 
+export interface DailySummary {
+  event_date: string;
+  run_hours: number;
+  active_machines: number;
+  impacts: number;
+  harsh_events: number;
+}
+
 export interface DailyBranchHours {
   event_date: string;
   branch: Branch;
@@ -78,11 +86,13 @@ export interface Dashboard {
   coverage: Coverage | null;
   from_date: string | null;
   to_date: string | null;
+  headline: string | null;
   kpis: Kpis | null;
   attention: AttentionItem[];
   machines: MachineRow[];
   drivers: DriverRow[];
   branches: BranchRow[];
+  daily: DailySummary[];
   daily_branch_hours: DailyBranchHours[];
   pipeline: PipelineStatus | null;
 }

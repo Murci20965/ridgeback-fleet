@@ -51,23 +51,24 @@ export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDa
               Least used
             </SortButton>
           </div>
-          <ul className="grid gap-2">
+          <ul className="grid gap-3">
             {shown.map((machine) => (
               <li key={machine.ref_no}>
                 <div className="flex items-baseline justify-between gap-3 text-[13px]">
                   <span className="min-w-0 truncate">
                     {machine.ref_no}
-                    <span className="ml-2 text-xs text-ink-2">
-                      {machine.machine_type} · {machine.assigned_branch}
+                    <span className="ml-2 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] text-ink-2">
+                      {machine.machine_type}
                     </span>
+                    <span className="ml-1.5 text-xs text-ink-2">{machine.assigned_branch}</span>
                   </span>
                   <span className="shrink-0 font-medium tabular-nums">
                     {machine.active ? formatHours(machine.run_hours) : isDay ? "Idle" : "Didn’t run"}
                   </span>
                 </div>
-                <div className="mt-1 h-1.5 rounded-full bg-surface-2" aria-hidden>
+                <div className="mt-1.5 h-2 rounded-full bg-surface-2" aria-hidden>
                   <div
-                    className="h-full rounded-full bg-accent"
+                    className="h-full rounded-full bg-activity transition-[width] duration-300 ease-out motion-reduce:transition-none"
                     style={{ width: `${(machine.run_hours / highest) * 100}%` }}
                   />
                 </div>

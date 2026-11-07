@@ -5,14 +5,33 @@ import { Panel, ShowMore } from "@/components/Panel";
 import type { DriverRow } from "@/lib/types";
 
 const COLLAPSED_ROWS = 7;
-const cell = "py-1.5 text-right tabular-nums";
+const cell = "py-2 pl-3 text-right tabular-nums";
 const heading = "pb-1.5 text-xs font-normal text-ink-2";
+
+function ImpactCell({ value, highest, muted }: { value: number; highest: number; muted?: boolean }) {
+  return (
+    <td className="w-[45%] py-2 pl-2">
+      <div className="flex items-center justify-end gap-2">
+        <div className="h-1.5 min-w-0 flex-1 rounded-full bg-surface-2" aria-hidden>
+          <div
+            className={`h-full rounded-full transition-[width] duration-300 ease-out motion-reduce:transition-none ${
+              muted ? "bg-line-strong" : "bg-safety"
+            }`}
+            style={{ width: `${highest > 0 ? (value / highest) * 100 : 0}%` }}
+          />
+        </div>
+        <span className="w-5 text-right font-medium tabular-nums">{value}</span>
+      </div>
+    </td>
+  );
+}
 
 export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
   const [expanded, setExpanded] = useState(false);
   const named = drivers.filter((driver) => driver.driver_name);
   const unattributed = drivers.find((driver) => !driver.driver_name);
   const shown = expanded ? named : named.slice(0, COLLAPSED_ROWS);
+  const highest = Math.max(...drivers.map((driver) => driver.impacts), 0);
 
   return (
     <Panel title="Drivers by impacts" subtitle="Harsh is braking, acceleration and speeding">
@@ -32,22 +51,22 @@ export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
             <tbody className="divide-y divide-line border-t border-line">
               {shown.map((driver) => (
                 <tr key={driver.driver_name}>
-                  <th scope="row" className="py-1.5 pr-2 text-left font-normal">
+                  <th scope="row" className="py-2 pr-2 text-left font-normal">
                     {driver.driver_name}
                   </th>
-                  <td className={`${cell} font-medium`}>{driver.impacts}</td>
-                  <td className={`${cell} pl-3`}>{driver.harsh}</td>
-                  <td className={`${cell} pl-3`}>{driver.idle}</td>
+                  <ImpactCell value={driver.impacts} highest={highest} />
+                  <td className={cell}>{driver.harsh}</td>
+                  <td className={cell}>{driver.idle}</td>
                 </tr>
               ))}
               {unattributed && (
                 <tr className="text-ink-2">
-                  <th scope="row" className="py-1.5 pr-2 text-left font-normal">
+                  <th scope="row" className="py-2 pr-2 text-left font-normal">
                     No driver logged on
                   </th>
-                  <td className={cell}>{unattributed.impacts}</td>
-                  <td className={`${cell} pl-3`}>{unattributed.harsh}</td>
-                  <td className={`${cell} pl-3`}>{unattributed.idle}</td>
+                  <ImpactCell value={unattributed.impacts} highest={highest} muted />
+                  <td className={cell}>{unattributed.harsh}</td>
+                  <td className={cell}>{unattributed.idle}</td>
                 </tr>
               )}
             </tbody>
