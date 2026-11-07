@@ -10,6 +10,8 @@ import psycopg
 from psycopg.rows import dict_row
 
 STATEMENT_TIMEOUT_MS = 5000
+# A database outage should show an error quickly, not leave someone watching a spinner.
+CONNECT_TIMEOUT_SECONDS = 5
 
 
 @contextmanager
@@ -22,7 +24,9 @@ def connect() -> Iterator[psycopg.Connection]:
     SET LOCAL lasts for this transaction only, because the pooler shares server sessions.
     """
     dsn = os.environ["DATABASE_URL"]
-    with psycopg.connect(dsn, row_factory=dict_row, prepare_threshold=None) as conn:
+    with psycopg.connect(
+        dsn, row_factory=dict_row, prepare_threshold=None, connect_timeout=CONNECT_TIMEOUT_SECONDS
+    ) as conn:
         conn.read_only = True
         conn.execute(f"SET LOCAL statement_timeout = {STATEMENT_TIMEOUT_MS}")
         yield conn
