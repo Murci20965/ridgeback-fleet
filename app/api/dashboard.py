@@ -125,6 +125,68 @@ def build_attention(
     return sorted(items, key=lambda item: item["severity"] != "critical")
 
 
+def _join(names: list[str]) -> str:
+    if len(names) < 2:
+        return "".join(names)
+    return f"{', '.join(names[:-1])} and {names[-1]}"
+
+
+def _subject(machine_type: str | None, branch: str | None) -> str:
+    """What the headline is about, such as 'the fleet' or 'Riverside forklifts'."""
+    kind = {"Forklift": "forklifts", "Reach Truck": "reach trucks", "PPT": "PPTs"}.get(
+        machine_type or ""
+    )
+    if branch:
+        return f"{branch} {kind}" if kind else branch
+    return kind or "the fleet"
+
+
+def build_headline(
+    kpis: dict[str, Any],
+    branches: list[dict[str, Any]],
+    daily: list[dict[str, Any]],
+    day: date | None = None,
+    machine_type: str | None = None,
+    branch: str | None = None,
+) -> str:
+    """Summarise the view in plain words, using rules and no LLM, so it can't invent anything."""
+    subject = _subject(machine_type, branch)
+    prefix = f"On {_day(day)}, " if day else ""
+    opening = f"{prefix}{subject}"
+    opening = opening[0].upper() + opening[1:]
+
+    if kpis["active_machines"] == 0:
+        return f"On {_day(day)}, no machines ran." if day else "No machines ran this week."
+
+    machines = "machine" if kpis["fleet_size"] == 1 else "machines"
+    hours = f"{kpis['run_hours']:,.1f} {'hour' if kpis['run_hours'] == 1 else 'hours'}"
+    first = (
+        f"{opening} ran {hours} across {kpis['active_machines']} of "
+        f"{kpis['fleet_size']} {machines}."
+    )
+
+    busiest = None
+    if not branch and branches:
+        busiest = max(branches, key=lambda row: row["run_hours"])["branch"]
+
+    if day:
+        impacts = kpis["impacts"]
+        count = "no impacts" if impacts == 0 else f"{impacts} impact{'s' if impacts != 1 else ''}"
+        # The count belongs to the whole view, so it must not read as the busiest branch's.
+        with_count = f"{first[:-1]}, with {count}."
+        return f"{with_count} {busiest} was busiest." if busiest else with_count
+
+    most = max((row["impacts"] for row in daily), default=0)
+    if most == 0:
+        impact_part = "there were no impacts"
+    else:
+        peaks = [f"{row['event_date']:%A}" for row in daily if row["impacts"] == most]
+        impact_part = f"{_join(peaks)} had the most impacts"
+    if busiest:
+        return f"{first} {busiest} was busiest, and {impact_part}."
+    return f"{first} {impact_part[0].upper()}{impact_part[1:]}."
+
+
 def build_dashboard(
     conn: psycopg.Connection,
     day: date | None = None,
@@ -158,15 +220,21 @@ def build_dashboard(
         "idle_events": sum(d["idle"] for d in drivers),
         "unattributed_impacts": sum(d["impacts"] for d in drivers if d["driver_name"] is None),
     }
+    branches = queries.get_branch_table(conn, from_date, to_date, **filters)
+    daily = queries.get_daily_summary(
+        conn, coverage["week_start"], coverage["week_end"], **filters
+    )
     return Dashboard(
         coverage=coverage,
         from_date=from_date,
         to_date=to_date,
+        headline=build_headline(kpis, branches, daily, day, machine_type, branch),
         kpis=kpis,
         attention=build_attention(exceptions, inactive, from_date, to_date),
         machines=machines,
         drivers=drivers,
-        branches=queries.get_branch_table(conn, from_date, to_date, **filters),
+        branches=branches,
+        daily=daily,
         daily_branch_hours=queries.get_daily_branch_hours(
             conn, coverage["week_start"], coverage["week_end"], **filters
         ),

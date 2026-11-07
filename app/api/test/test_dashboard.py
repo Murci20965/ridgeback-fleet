@@ -118,3 +118,20 @@ def test_unknown_machine_follows_day_branch_and_type(database):
 def test_held_rows_are_counted_in_the_detail(database):
     item = next(i for i in get()["attention"] if i["kind"] == "unknown_machine")
     assert item["detail"].startswith("21 rows")
+
+
+def test_headline_matches_independent_figures(database):
+    assert get()["headline"] == (
+        "The fleet ran 1,052.7 hours across 29 of 30 machines. "
+        "Harbour was busiest, and Tuesday had the most impacts."
+    )
+
+
+def test_daily_summary_matches_independent_figures(database):
+    daily = {row["event_date"]: row for row in get()["daily"]}
+    assert len(daily) == 7
+    assert daily["2026-09-08"]["run_hours"] == 197.3
+    assert daily["2026-09-08"]["impacts"] == 33
+    assert daily["2026-09-09"]["harsh_events"] == 127
+    assert daily["2026-09-10"]["active_machines"] == 29
+    assert sum(row["impacts"] for row in daily.values()) == 133

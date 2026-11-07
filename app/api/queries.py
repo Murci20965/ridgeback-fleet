@@ -270,6 +270,54 @@ def get_branch_table(
     )
 
 
+def get_daily_summary(
+    conn: psycopg.Connection,
+    week_start: date,
+    week_end: date,
+    machine_type: str | None = None,
+    branch: str | None = None,
+) -> list[dict[str, Any]]:
+    """One row per day with data: hours, active machines, impacts and harsh events."""
+    return _rows(
+        conn,
+        """
+        WITH hours AS (
+            SELECT event_date, ROUND(SUM(run_seconds) / 3600.0, 2) AS run_hours,
+                   COUNT(DISTINCT ref_no)::int AS active_machines
+            FROM v_machine_daily_hours
+            WHERE event_date BETWEEN %(week_start)s AND %(week_end)s
+              AND (%(machine_type)s::text IS NULL OR machine_type = %(machine_type)s)
+              AND (%(branch)s::text IS NULL OR reported_branch = %(branch)s)
+            GROUP BY event_date
+        ),
+        events AS (
+            SELECT event_date,
+                   COALESCE(SUM(events) FILTER (WHERE event_type = 'Impact'), 0)::int AS impacts,
+                   COALESCE(
+                       SUM(events) FILTER (WHERE event_type = ANY(%(harsh)s)), 0
+                   )::int AS harsh_events
+            FROM v_driver_events
+            WHERE event_date BETWEEN %(week_start)s AND %(week_end)s
+              AND (%(machine_type)s::text IS NULL OR machine_type = %(machine_type)s)
+              AND (%(branch)s::text IS NULL OR reported_branch = %(branch)s)
+            GROUP BY event_date
+        )
+        SELECT h.event_date, h.run_hours, h.active_machines,
+               COALESCE(e.impacts, 0) AS impacts, COALESCE(e.harsh_events, 0) AS harsh_events
+        FROM hours h
+        LEFT JOIN events e USING (event_date)
+        ORDER BY h.event_date
+        """,
+        {
+            "week_start": week_start,
+            "week_end": week_end,
+            "machine_type": machine_type,
+            "branch": branch,
+            "harsh": list(HARSH_EVENTS),
+        },
+    )
+
+
 def get_daily_branch_hours(
     conn: psycopg.Connection,
     week_start: date,

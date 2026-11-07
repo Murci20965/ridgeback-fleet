@@ -62,6 +62,14 @@ class BranchRow(BaseModel):
     harsh: int
 
 
+class DailySummary(BaseModel):
+    event_date: date
+    run_hours: float
+    active_machines: int
+    impacts: int
+    harsh_events: int
+
+
 class DailyBranchHours(BaseModel):
     event_date: date
     branch: str
@@ -83,11 +91,13 @@ class Dashboard(BaseModel):
     coverage: Coverage | None
     from_date: date | None = None
     to_date: date | None = None
+    headline: str | None = None
     kpis: Kpis | None = None
     attention: list[AttentionItem] = []
     machines: list[MachineRow] = []
     drivers: list[DriverRow] = []
     branches: list[BranchRow] = []
+    daily: list[DailySummary] = []
     daily_branch_hours: list[DailyBranchHours] = []
     pipeline: PipelineStatus | None = None
 
