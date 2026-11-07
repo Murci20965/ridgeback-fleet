@@ -46,7 +46,7 @@ export function Header({ pipeline }: { pipeline: PipelineStatus | null }) {
       >
         <div className="flex min-w-0 items-center gap-2.5">
           {/* The same mark as the tab icon. Theme colours make it follow the toggle here. */}
-          <svg viewBox="0 0 32 32" className="size-6 shrink-0" aria-hidden>
+          <svg viewBox="0 0 32 32" className="size-5 shrink-0" aria-hidden>
             <rect width="32" height="32" rx="8" fill="var(--ink)" />
             <rect x="8" y="17" width="4" height="8" rx="1" fill="var(--surface)" />
             <rect x="14" y="12" width="4" height="13" rx="1" fill="var(--surface)" />
