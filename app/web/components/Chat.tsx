@@ -134,10 +134,12 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
           if (event.type === "status") setStatus(event.text);
           if (event.type === "answer") {
             finished = true;
+            setStatus(null);
             addMessage({ role: "assistant", text: event.text, trace: event.trace });
           }
           if (event.type === "error") {
             finished = true;
+            setStatus(null);
             addMessage({ role: "assistant", text: event.message, failed: true });
           }
         }
