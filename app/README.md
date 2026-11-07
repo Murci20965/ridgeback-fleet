@@ -4,6 +4,10 @@ One hosted application: a FastAPI service (`api/`) and a Next.js interface (`web
 
 Next.js only displays data. All database access, business logic and LLM calls are in FastAPI, and the dashboard and chat share [`queries.py`](api/queries.py), so their figures can't disagree.
 
+## Headline
+
+The sentence at the top of the dashboard comes from `build_headline()` in [`dashboard.py`](api/dashboard.py). It uses plain rules rather than the LLM, so it costs nothing, responds instantly and can't invent a figure.
+
 ## Needs attention
 
 The API builds this list, critical items first, and each item carries the question its **Ask** button sends to the chat. Items follow the filters. A cut-off file shows only for its own day. A machine that isn't on the list has no known type, so it's left out of machine type views, and its branch comes from its raw row.
