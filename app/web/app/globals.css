@@ -104,8 +104,10 @@ body {
   outline-offset: 2px;
 }
 
-/* The chat box's caret already shows focus, so it doesn't need an outline as well. */
-textarea:focus-visible {
+/* The chat box's caret and a menu item's highlight already show focus, so neither needs an
+   outline as well. */
+textarea:focus-visible,
+.select-menu [role="option"]:focus-visible {
   outline: none;
 }
 
