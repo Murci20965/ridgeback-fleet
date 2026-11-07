@@ -159,6 +159,7 @@ def answer_question(
                     "verified": outcome == "answered",
                     "trace": trace,
                     "model": model,
+                    "tokens": tokens,
                 }
                 return
 
