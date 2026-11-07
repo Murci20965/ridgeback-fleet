@@ -2,7 +2,7 @@
 
 Five questions asked of the chat, with its answers from `anthropic/claude-haiku-5.5` through the real agent, tools and database. "Correct" means the answer matches a separate profile of the raw files, or that the chat correctly refused. The full set of 12 questions for both models is in [`model_evaluation.md`](model_evaluation.md).
 
-| # | Question | Answer | Correct? |
+| # | Question | Chat's answer | Correct? |
 | --- | --- | --- | --- |
 | 1 | Which forklift ran the most hours on Tuesday? | On Tue 8 Sep, the forklift that ran the most hours was FBA60251489088 at Riverside, with 12.05 run hours. | Yes. A plain max-minus-min would wrongly pick FBA33639374813, whose meter reset twice that day |
 | 2 | Which driver had the most impacts this week? | Ashwin Daniels had the most impacts this week, with 10 between 7 and 13 Sep. Five impact events have no driver logged on, so they can't be attributed to anyone. | Yes, including the caveat. It counts `ASHWIN DANIELS` and `Ashwin Daniels` as one person |
