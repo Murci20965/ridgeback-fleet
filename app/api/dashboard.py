@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 import psycopg
@@ -126,75 +125,47 @@ def build_attention(
     return sorted(items, key=lambda item: item["severity"] != "critical")
 
 
-def format_hours(hours: float) -> str:
-    """One decimal, rounding halves up, as the dashboard's tiles do.
-
-    Python's format() can round 52.25 down to 52.2, which would disagree with the tile's 52.3.
-    """
-    rounded = Decimal(str(hours)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
-    return f"{rounded:,}"
-
-
 def _join(names: list[str]) -> str:
     if len(names) < 2:
         return "".join(names)
     return f"{', '.join(names[:-1])} and {names[-1]}"
 
 
-def _subject(machine_type: str | None, branch: str | None) -> str:
-    """What the headline is about, such as 'the fleet' or 'Riverside forklifts'."""
-    kind = {"Forklift": "forklifts", "Reach Truck": "reach trucks", "PPT": "PPTs"}.get(
-        machine_type or ""
-    )
-    if branch:
-        return f"{branch} {kind}" if kind else branch
-    return kind or "the fleet"
-
-
 def build_headline(
-    kpis: dict[str, Any],
     branches: list[dict[str, Any]],
     daily: list[dict[str, Any]],
+    machines: list[dict[str, Any]],
     day: date | None = None,
-    machine_type: str | None = None,
     branch: str | None = None,
 ) -> str:
-    """Summarise the view in plain words, using rules and no LLM, so it can't invent anything."""
-    subject = _subject(machine_type, branch)
-    prefix = f"On {_day(day)}, " if day else ""
-    opening = f"{prefix}{subject}"
-    opening = opening[0].upper() + opening[1:]
+    """Say the one thing the KPI tiles don't: what stands out in this view.
 
-    if kpis["active_machines"] == 0:
-        return f"On {_day(day)}, no machines ran." if day else "No machines ran this week."
+    It uses rules and no LLM, so it can't invent anything. The dashboard shows the branch,
+    machine type and dates in a label above it, so this sentence doesn't repeat them.
+    """
+    active = [row for row in machines if row["active"]]
+    if not active:
+        return "No machines ran."
 
-    machines = "machine" if kpis["fleet_size"] == 1 else "machines"
-    hours = f"{format_hours(kpis['run_hours'])} {'hour' if kpis['run_hours'] == 1 else 'hours'}"
-    first = (
-        f"{opening} ran {hours} across {kpis['active_machines']} of "
-        f"{kpis['fleet_size']} {machines}."
-    )
+    most_hours = max(row["run_hours"] for row in active)
+    top_machines = [row["ref_no"] for row in active if row["run_hours"] == most_hours]
+    top_machine = f"{_join(top_machines)} ran the most hours."
 
-    busiest = None
-    if not branch and branches:
-        busiest = max(branches, key=lambda row: row["run_hours"])["branch"]
+    most_impacts = max((row["impacts"] for row in daily), default=0)
+    peak_days = [f"{row['event_date']:%A}" for row in daily if row["impacts"] == most_impacts]
+    has_impacts = most_impacts > 0
 
+    if branch:
+        if day or not has_impacts:
+            return top_machine
+        return f"{_join(peak_days)} had the most impacts."
+
+    busiest = max(branches, key=lambda row: row["run_hours"])["branch"]
     if day:
-        impacts = kpis["impacts"]
-        count = "no impacts" if impacts == 0 else f"{impacts} impact{'s' if impacts != 1 else ''}"
-        # The count belongs to the whole view, so it must not read as the busiest branch's.
-        with_count = f"{first[:-1]}, with {count}."
-        return f"{with_count} {busiest} was busiest." if busiest else with_count
-
-    most = max((row["impacts"] for row in daily), default=0)
-    if most == 0:
-        impact_part = "there were no impacts"
-    else:
-        peaks = [f"{row['event_date']:%A}" for row in daily if row["impacts"] == most]
-        impact_part = f"{_join(peaks)} had the most impacts"
-    if busiest:
-        return f"{first} {busiest} was busiest, and {impact_part}."
-    return f"{first} {impact_part[0].upper()}{impact_part[1:]}."
+        return f"{busiest} was busiest."
+    if not has_impacts:
+        return f"{busiest} was busiest, with no impacts."
+    return f"{busiest} was busiest, and {_join(peak_days)} had the most impacts."
 
 
 def build_dashboard(
@@ -238,7 +209,7 @@ def build_dashboard(
         coverage=coverage,
         from_date=from_date,
         to_date=to_date,
-        headline=build_headline(kpis, branches, daily, day, machine_type, branch),
+        headline=build_headline(branches, daily, machines, day, branch),
         kpis=kpis,
         attention=build_attention(exceptions, inactive, from_date, to_date),
         machines=machines,

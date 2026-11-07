@@ -121,10 +121,7 @@ def test_held_rows_are_counted_in_the_detail(database):
 
 
 def test_headline_matches_independent_figures(database):
-    assert get()["headline"] == (
-        "The fleet ran 1,052.7 hours across 29 of 30 machines. "
-        "Harbour was busiest, and Tuesday had the most impacts."
-    )
+    assert get()["headline"] == "Harbour was busiest, and Tuesday had the most impacts."
 
 
 def test_daily_summary_matches_independent_figures(database):

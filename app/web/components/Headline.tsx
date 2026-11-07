@@ -1,13 +1,28 @@
-/** The view's summary, with the first sentence leading and the rest quieter. */
-export function Headline({ dates, text }: { dates: string; text: string }) {
-  // A figure like 1,052.7 has no space after its point, so this only splits between sentences.
-  const [lead, ...rest] = text.split(/(?<=\.)\s/);
+import { rangeLabel } from "@/lib/format";
+import type { Filters } from "@/lib/types";
+
+/** What's in view as a quiet label, then the one thing that stands out. */
+export function Headline({
+  filters,
+  from,
+  to,
+  text,
+}: {
+  filters: Filters;
+  from: string;
+  to: string;
+  text: string;
+}) {
+  const scope = [filters.branch, filters.type, rangeLabel(from, to)].filter(Boolean).join(" · ");
 
   return (
     <div className="mt-5 mb-3 lg:mt-3">
-      <p className="text-[13px] font-medium text-ink-2">{dates}</p>
-      <h2 key={text} className="soft-in mt-1.5 text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-balance md:text-[34px] lg:text-wrap">
-        {lead} <span className="text-ink-2">{rest.join(" ")}</span>
+      <p className="text-[13px] text-ink-2">{scope}</p>
+      <h2
+        key={text}
+        className="soft-in mt-1 text-[24px] leading-tight font-semibold tracking-[-0.02em] md:text-[28px]"
+      >
+        {text}
       </h2>
     </div>
   );

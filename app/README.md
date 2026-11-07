@@ -6,7 +6,7 @@ Next.js only displays data. All database access, business logic and LLM calls ar
 
 ## Headline
 
-The sentence at the top of the dashboard comes from `build_headline()` in [`dashboard.py`](api/dashboard.py). It uses plain rules rather than the LLM, so it costs nothing, responds instantly and can't invent a figure.
+The sentence at the top of the dashboard comes from `build_headline()` in [`dashboard.py`](api/dashboard.py). It says only what the KPI tiles don't, such as the busiest branch or the day with the most impacts. It uses plain rules rather than the LLM, so it costs nothing, responds instantly and can't invent anything.
 
 ## Needs attention
 

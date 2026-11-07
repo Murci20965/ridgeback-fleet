@@ -12,7 +12,6 @@ import { KpiRow } from "@/components/KpiRow";
 import { MachineHours } from "@/components/MachineHours";
 import { PipelineFooter } from "@/components/PipelineFooter";
 import { DayOutsideData, fetchDashboard } from "@/lib/api";
-import { rangeLabel } from "@/lib/format";
 import { BRANCHES, MACHINE_TYPES, type Branch, type Filters, type MachineType } from "@/lib/types";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -50,7 +49,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                 <>
                   <PendingFrame>
                     <Headline
-                      dates={rangeLabel(data.from_date!, data.to_date!)}
+                      filters={filters}
+                      from={data.from_date!}
+                      to={data.to_date!}
                       text={data.headline ?? ""}
                     />
                   </PendingFrame>
