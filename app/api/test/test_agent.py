@@ -72,6 +72,10 @@ class TestGuard:
     def test_thousands_separator(self):
         assert unsupported_numbers("That's 1,052.7 hours.", [{"run_hours": 1052.73}]) == []
 
+    def test_spelled_out_figures_are_checked(self):
+        assert unsupported_numbers("Five impacts had no driver.", [{"events": 5}]) == []
+        assert unsupported_numbers("Seven impacts had no driver.", [{"events": 5}]) == ["Seven"]
+
     def test_dates_count_as_evidence(self):
         assert unsupported_numbers("On Tue 8 Sep.", [{"day": date(2026, 9, 8)}]) == []
 

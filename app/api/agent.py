@@ -34,6 +34,17 @@ TOOL_STATUS = {
 # Numbers inside references like P57083 or FBA60251489088 aren't figures.
 NUMBER = re.compile(r"(?<![A-Za-z0-9.,])\d[\d,]*(?:\.\d+)?")
 
+# Spelled-out figures are checked too. "One" is left out because it's rarely a figure in prose.
+NUMBER_WORDS = {
+    word: float(value)
+    for value, word in enumerate(
+        "two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
+        "sixteen seventeen eighteen nineteen twenty".split(),
+        start=2,
+    )
+}
+NUMBER_WORD = re.compile(rf"\b({'|'.join(NUMBER_WORDS)})\b", re.IGNORECASE)
+
 
 def system_prompt(coverage: dict[str, Any] | None) -> str:
     if coverage is None:
@@ -59,6 +70,7 @@ from memory, or fill a gap. Call a tool for every question about the data.
 - If the tools can't answer, say plainly that the data can't answer it, then offer what you can \
 answer. The data doesn't record: {"; ".join(NOT_RECORDED)}.
 - If a tool returns outside_data or no_data, say which dates the data covers. Don't guess.
+- Write every figure in digits, such as "5 impacts", never as a word.
 - State the dates you used, such as "Tue 8 Sep" or "7 to 13 Sep". Give hours to 2 decimals as \
 returned.
 - If rows tie for first place, name all of them.
@@ -105,6 +117,9 @@ def unsupported_numbers(answer: str, evidence: list[Any]) -> list[str]:
         tolerance = 0.5 * 10**-decimals + 1e-9
         if not any(abs(value - known) <= tolerance for known in allowed):
             unsupported.append(text)
+    for word in NUMBER_WORD.findall(answer):
+        if NUMBER_WORDS[word.lower()] not in allowed:
+            unsupported.append(word)
     return unsupported
 
 

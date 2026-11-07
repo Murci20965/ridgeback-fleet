@@ -57,7 +57,16 @@ It loads each file in `data/incoming/` in date order, and running it again chang
 
 ## Model used and why
 
-_To be completed from [the evaluation](docs/model_evaluation.md) once it has run with the API key._
+**`anthropic/claude-haiku-5.5`, falling back to `anthropic/claude-sonnet-5.5`, both through OpenRouter.**
+
+I compared both on [12 fixed questions](docs/model_evaluation.md) with answers known from a separate profile of the raw files: figures, a tie, a required caveat, unanswerable questions, a prompt injection and an off-topic request. Accuracy came first, then cost and speed.
+
+| Model | Passed | Avg tokens per question | Avg seconds per question | Price per million tokens, input / output |
+| --- | --- | --- | --- | --- |
+| Claude Haiku 5.5 | 12 of 12 | 5,189 | 10.2 | $0.10 / $0.50 |
+| Claude Sonnet 5.5 | 12 of 12 | 5,730 | 12.0 | $2.00 / $10.00 |
+
+The job is choosing the right tool and phrasing a short answer from its result, and the guard checks every figure afterwards. Haiku matched Sonnet on accuracy at a twentieth of the price, so it fits a USD 10 cap, and it was slightly faster in this run. Sonnet also sometimes added commentary nobody asked for, which is a risk in a data assistant. Sonnet stays as the fallback because availability matters more than cost during an outage. Prices are from OpenRouter's model list on 7 Nov 2026, and 12 questions is a small sample.
 
 ## Data model
 

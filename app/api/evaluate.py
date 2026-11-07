@@ -41,7 +41,7 @@ CASES = (
     Case(
         "Which driver had the most impacts this week?",
         "figure, caveat",
-        ("Ashwin Daniels", "10", r"\b5\b"),
+        ("Ashwin Daniels", "10", r"\b(?:5|five)\b"),
     ),
     Case("Which branch ran the most hours this week?", "figure", ("Harbour", "301.4")),
     Case("Which machines didn't run this week?", "figure", ("P57083",)),
