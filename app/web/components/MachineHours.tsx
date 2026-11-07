@@ -1,37 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useChatBridge } from "@/components/ChatBridge";
+import { useFilters } from "@/components/FilterProvider";
 import { Panel, ShowMore } from "@/components/Panel";
+import { Segmented } from "@/components/Segmented";
 import { formatHours } from "@/lib/format";
+import { machineQuestion } from "@/lib/questions";
 import type { MachineRow } from "@/lib/types";
 
 const COLLAPSED_ROWS = 8;
 
-function SortButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-pressed={active}
-      className={`pressable min-h-7 rounded-[7px] px-3 text-xs ${
-        active ? "bg-surface font-medium text-ink shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
-
 export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDay: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const [leastFirst, setLeastFirst] = useState(false);
+  const { askChat } = useChatBridge();
+  const { filters } = useFilters();
   // The API sends the busiest first. Machines that didn't run lead the least used view.
   const ordered = leastFirst ? [...machines].reverse() : machines;
   const shown = expanded ? ordered : ordered.slice(0, COLLAPSED_ROWS);
@@ -43,17 +27,26 @@ export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDa
         <p className="text-sm text-ink-2">No machines match these filters.</p>
       ) : (
         <>
-          <div className="mb-4 inline-flex gap-0.5 rounded-[9px] bg-surface-2 p-[3px]" role="group" aria-label="Sort machines">
-            <SortButton active={!leastFirst} onClick={() => setLeastFirst(false)}>
-              Most used
-            </SortButton>
-            <SortButton active={leastFirst} onClick={() => setLeastFirst(true)}>
-              Least used
-            </SortButton>
+          <div className="mb-4">
+            <Segmented
+              small
+              ariaLabel="Sort machines"
+              value={leastFirst ? "least" : "most"}
+              onChange={(value) => setLeastFirst(value === "least")}
+              options={[
+                { value: "most", label: "Most used" },
+                { value: "least", label: "Least used" },
+              ]}
+            />
           </div>
-          <ul className="grid gap-4">
+          <ul className="-mx-2 grid gap-1">
             {shown.map((machine) => (
               <li key={machine.ref_no}>
+                <button
+                  onClick={() => askChat(machineQuestion(machine.ref_no, filters))}
+                  title={machineQuestion(machine.ref_no, filters)}
+                  className="pressable block w-full cursor-pointer rounded-[12px] p-2 text-left hover:bg-surface-2"
+                >
                 <div className="flex items-baseline justify-between gap-3 text-[13px]">
                   <span className="min-w-0 truncate">
                     {machine.ref_no}
@@ -71,6 +64,7 @@ export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDa
                     style={{ width: `${(machine.run_hours / highest) * 100}%` }}
                   />
                 </div>
+                </button>
               </li>
             ))}
           </ul>

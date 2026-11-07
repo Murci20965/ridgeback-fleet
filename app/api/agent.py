@@ -71,6 +71,7 @@ Call a tool for every question about the data.
 - If the tools can't answer, say plainly that the data can't answer it, then offer what you can \
 answer. The data doesn't record: {"; ".join(NOT_RECORDED)}.
 - If a tool returns outside_data or no_data, say which dates the data covers. Don't guess.
+- "Harsh events" means Harsh Braking, Harsh Acceleration and Speeding together.
 - Write every figure in digits, such as "5 impacts", never as a word.
 - State the dates you used, such as "Tue 8 Sep" or "7 to 13 Sep". Give hours to 2 decimals as \
 returned.

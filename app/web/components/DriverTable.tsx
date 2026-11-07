@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useChatBridge } from "@/components/ChatBridge";
+import { useFilters } from "@/components/FilterProvider";
 import { Panel, ShowMore } from "@/components/Panel";
+import { driverQuestion } from "@/lib/questions";
 import type { DriverRow } from "@/lib/types";
 
 const COLLAPSED_ROWS = 7;
@@ -28,6 +31,8 @@ function ImpactCell({ value, highest, muted }: { value: number; highest: number;
 
 export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
   const [expanded, setExpanded] = useState(false);
+  const { askChat } = useChatBridge();
+  const { filters } = useFilters();
   const named = drivers.filter((driver) => driver.driver_name);
   const unattributed = drivers.find((driver) => !driver.driver_name);
   const shown = expanded ? named : named.slice(0, COLLAPSED_ROWS);
@@ -50,9 +55,20 @@ export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
             </thead>
             <tbody className="divide-y divide-line border-t border-line">
               {shown.map((driver) => (
-                <tr key={driver.driver_name}>
-                  <th scope="row" className="py-2.5 pr-2 text-left font-normal">
-                    {driver.driver_name}
+                <tr
+                  key={driver.driver_name}
+                  onClick={() => askChat(driverQuestion(driver.driver_name!, filters))}
+                  className="cursor-pointer transition-colors duration-150 hover:bg-surface-2"
+                >
+                  <th scope="row" className="rounded-l-lg py-2.5 pr-2 pl-1 text-left font-normal">
+                    {/* The row handles the click. This button makes it reachable by keyboard. */}
+                    <button
+                      title={driverQuestion(driver.driver_name!, filters)}
+                      aria-label={`Ask the assistant: ${driverQuestion(driver.driver_name!, filters)}`}
+                      className="cursor-pointer text-left"
+                    >
+                      {driver.driver_name}
+                    </button>
                   </th>
                   <ImpactCell value={driver.impacts} highest={highest} />
                   <td className={cell}>{driver.harsh}</td>

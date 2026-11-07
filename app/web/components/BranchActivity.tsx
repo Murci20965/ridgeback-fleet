@@ -99,7 +99,7 @@ export function BranchActivity({
     .sort((a, b) => b.run_hours - a.run_hours);
 
   return (
-    <Panel title="Branch activity" subtitle="Run hours per day. Select a day to focus on it.">
+    <Panel title="Branch activity" subtitle="Select a day or a branch to focus on it">
       <div
         className="h-56"
         role="img"
@@ -135,7 +135,7 @@ export function BranchActivity({
                 stroke="var(--surface)"
                 strokeWidth={2}
                 radius={index === shownBranches.length - 1 ? [4, 4, 0, 0] : 0}
-                isAnimationActive={false}
+                animationDuration={320}
                 cursor="pointer"
                 onClick={(entry: { payload?: { day?: string } }) => {
                   const day = entry.payload?.day;
@@ -165,16 +165,27 @@ export function BranchActivity({
         </thead>
         <tbody className="divide-y divide-line border-t border-line tabular-nums">
           {rows.map((row) => (
-            <tr key={row.branch}>
-              <th scope="row" className="py-2.5 text-left font-normal">
-                <span className="flex items-center gap-2">
+            <tr
+              key={row.branch}
+              onClick={() => setFilter("branch", filters.branch === row.branch ? null : row.branch)}
+              className={`cursor-pointer transition-colors duration-150 hover:bg-surface-2 ${
+                filters.branch === row.branch ? "bg-surface-2" : ""
+              }`}
+            >
+              <th scope="row" className="rounded-l-lg py-2.5 pl-1 text-left font-normal">
+                {/* The row handles the click. This button makes it reachable by keyboard. */}
+                <button
+                  aria-pressed={filters.branch === row.branch}
+                  aria-label={`Filter by ${row.branch}`}
+                  className="flex cursor-pointer items-center gap-2"
+                >
                   <span
                     className="size-2.5 rounded-full"
                     style={{ background: BRANCH_COLOUR[row.branch] }}
                     aria-hidden
                   />
                   {row.branch}
-                </span>
+                </button>
               </th>
               <td className="py-2.5 text-right font-medium">{formatHours(row.run_hours)}</td>
               <td className="py-2.5 text-right">{row.active_machines}</td>

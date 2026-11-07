@@ -104,6 +104,20 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
     });
   }
 
+  // "/" jumps to the chat from anywhere, unless someone is already typing.
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      const target = event.target as HTMLElement;
+      const isTyping = target.closest("input, textarea, select, [contenteditable]");
+      if (event.key === "/" && !isTyping && !event.metaKey && !event.ctrlKey) {
+        event.preventDefault();
+        setPanelOpen(true);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   // A question sent from elsewhere on the page, such as an Ask button.
   useEffect(() => {
     if (!pending) return;
@@ -277,12 +291,12 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                 message.role === "user" ? (
                   <li
                     key={message.id}
-                    className="ml-8 justify-self-end rounded-[18px] rounded-br-[6px] bg-accent px-3 py-2 text-sm break-words text-on-accent"
+                    className="soft-in ml-8 justify-self-end rounded-[18px] rounded-br-[6px] bg-accent px-3 py-2 text-sm break-words text-on-accent"
                   >
                     {message.text}
                   </li>
                 ) : (
-                  <li key={message.id} className="text-sm leading-relaxed break-words">
+                  <li key={message.id} className="soft-in text-sm leading-relaxed break-words">
                     <p className={`whitespace-pre-line ${message.failed ? "text-ink-2" : ""}`}>
                       {message.text}
                     </p>
@@ -336,6 +350,11 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
               aria-label="Your question"
               className="max-h-28 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-base outline-none [field-sizing:content] placeholder:text-ink-2 lg:text-sm"
             />
+            {!input && (
+              <kbd className="mb-2 hidden rounded-md border border-line-strong px-1.5 text-[11px] text-ink-2 lg:block">
+                /
+              </kbd>
+            )}
             <button
               type="submit"
               aria-label="Send your question"

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from dashboard import build_headline
+from dashboard import build_headline, format_hours
 
 KPIS = {"run_hours": 1052.73, "active_machines": 29, "fleet_size": 30, "impacts": 133}
 BRANCHES = [{"branch": "Airport", "run_hours": 223.5}, {"branch": "Harbour", "run_hours": 301.4}]
@@ -65,6 +65,13 @@ def test_no_activity():
     idle = {**KPIS, "run_hours": 0, "active_machines": 0}
     assert build_headline(idle, [], []) == "No machines ran this week."
     assert build_headline(idle, [], [], day=date(2026, 9, 13)) == "On Sun 13 Sep, no machines ran."
+
+
+def test_hours_round_like_the_dashboard_tiles():
+    assert format_hours(52.25) == "52.3"
+    assert format_hours(1052.73) == "1,052.7"
+    assert format_hours(0) == "0.0"
+    assert "ran 52.3 hours" in build_headline({**KPIS, "run_hours": 52.25}, BRANCHES, DAILY)
 
 
 def test_a_single_machine_is_singular():

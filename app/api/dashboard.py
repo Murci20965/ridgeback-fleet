@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 import psycopg
@@ -125,6 +126,15 @@ def build_attention(
     return sorted(items, key=lambda item: item["severity"] != "critical")
 
 
+def format_hours(hours: float) -> str:
+    """One decimal, rounding halves up, as the dashboard's tiles do.
+
+    Python's format() can round 52.25 down to 52.2, which would disagree with the tile's 52.3.
+    """
+    rounded = Decimal(str(hours)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
+    return f"{rounded:,}"
+
+
 def _join(names: list[str]) -> str:
     if len(names) < 2:
         return "".join(names)
@@ -159,7 +169,7 @@ def build_headline(
         return f"On {_day(day)}, no machines ran." if day else "No machines ran this week."
 
     machines = "machine" if kpis["fleet_size"] == 1 else "machines"
-    hours = f"{kpis['run_hours']:,.1f} {'hour' if kpis['run_hours'] == 1 else 'hours'}"
+    hours = f"{format_hours(kpis['run_hours'])} {'hour' if kpis['run_hours'] == 1 else 'hours'}"
     first = (
         f"{opening} ran {hours} across {kpis['active_machines']} of "
         f"{kpis['fleet_size']} {machines}."
