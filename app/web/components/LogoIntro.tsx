@@ -66,7 +66,8 @@ export function LogoIntro() {
           { opacity: 0, transform: "translateY(6px) scale(0.98)" },
           { opacity: 1, transform: "none" },
         ],
-        { duration: 420, delay: 860, easing: EASE_OUT, fill: "both" },
+        // Lands with the logo, so the logo doesn't cross the card's text once it's readable.
+        { duration: 340, delay: 980, easing: "ease-out", fill: "both" },
       ),
     ];
 
