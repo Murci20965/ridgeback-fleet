@@ -7,6 +7,7 @@ import type { ChatEvent, Coverage, TraceStep } from "@/lib/types";
 
 const MAX_QUESTION_LENGTH = 500;
 const MAX_HISTORY_MESSAGES = 6;
+const DOCKED_KEY = "chat-docked";
 const SUGGESTIONS = [
   "Which forklift ran the most hours on Tuesday?",
   "Which driver had the most impacts this week?",
@@ -65,7 +66,10 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<string | null>(null);
+  // A phone starts with the sheet closed, and a large screen starts with the panel docked.
   const [isOpen, setIsOpen] = useState(false);
+  const [isDocked, setIsDocked] = useState(true);
+  const launcherRef = useRef<HTMLButtonElement>(null);
   const nextId = useRef(1);
   const abort = useRef<AbortController | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -78,14 +82,25 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
 
   useEffect(() => () => abort.current?.abort(), []);
 
+  // Remembers a closed panel between visits. Storage can be blocked, and then it just stays open.
   useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isOpen]);
+    try {
+      if (localStorage.getItem(DOCKED_KEY) === "false") setIsDocked(false);
+    } catch {}
+  }, []);
+
+  function setPanelOpen(open: boolean) {
+    setIsOpen(open);
+    setIsDocked(open);
+    try {
+      localStorage.setItem(DOCKED_KEY, String(open));
+    } catch {}
+    // Keyboard users continue from the control that took its place.
+    requestAnimationFrame(() => {
+      if (open) inputRef.current?.focus({ preventScroll: true });
+      else launcherRef.current?.focus({ preventScroll: true });
+    });
+  }
 
   function addMessage(message: Omit<Message, "id">) {
     const id = nextId.current++;
@@ -167,11 +182,11 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
   return (
     <>
       <button
-        onClick={() => {
-          setIsOpen(true);
-          inputRef.current?.focus({ preventScroll: true });
-        }}
-        className="pressable fixed right-4 bottom-4 z-30 flex min-h-12 items-center gap-2 rounded-full bg-accent px-4 text-sm font-medium text-on-accent shadow-lg lg:hidden"
+        ref={launcherRef}
+        onClick={() => setPanelOpen(true)}
+        className={`pressable fixed right-4 bottom-4 z-30 flex min-h-12 items-center gap-2 rounded-full bg-accent px-4 text-sm font-medium text-on-accent shadow-lg ${
+          isDocked ? "lg:hidden" : ""
+        }`}
       >
         <MessageCircle size={18} aria-hidden />
         Ask about your fleet
@@ -179,7 +194,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
       {isOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setIsOpen(false)}
+          onClick={() => setPanelOpen(false)}
           aria-hidden
         />
       )}
@@ -187,6 +202,10 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
       <aside
         aria-label="Fleet assistant"
         data-open={isOpen}
+        data-docked={isDocked}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") setPanelOpen(false);
+        }}
         className="chat-panel flex min-h-0 flex-col overflow-hidden rounded-xl border border-line bg-surface"
       >
         <header className="flex items-center justify-between gap-2 border-b border-line py-2.5 pr-2 pl-4">
@@ -209,9 +228,9 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
               </button>
             )}
             <button
-              onClick={() => setIsOpen(false)}
+              onClick={() => setPanelOpen(false)}
               aria-label="Close the assistant"
-              className="pressable grid size-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2 lg:hidden"
+              className="pressable grid size-9 place-items-center rounded-lg text-ink-2 hover:bg-surface-2"
             >
               <X size={16} aria-hidden />
             </button>

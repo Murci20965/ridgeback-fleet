@@ -140,6 +140,16 @@ body {
   }
 }
 
+/* Closing the docked panel gives its column back to the dashboard. */
+@media (min-width: 1024px) {
+  .chat-panel[data-docked="false"] {
+    display: none;
+  }
+  .app-layout:has(.chat-panel[data-docked="false"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pressable,
   .chat-panel,

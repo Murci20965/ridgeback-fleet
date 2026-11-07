@@ -41,7 +41,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
     <FilterProvider filters={filters}>
       <div className="flex min-h-dvh flex-col lg:h-dvh">
         <Header pipeline={data.pipeline} />
-        <div className="mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-4 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-5 lg:p-5 lg:pt-3">
+        <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-4 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-5 lg:p-5 lg:pt-3">
           <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
             {data.coverage && data.kpis ? (
               <>
