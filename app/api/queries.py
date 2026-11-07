@@ -69,6 +69,18 @@ def find_machines(conn: psycopg.Connection, fragment: str) -> list[str]:
     return [row["ref_no"] for row in rows]
 
 
+def count_held_rows(conn: psycopg.Connection, fragment: str) -> int:
+    """Rows held out because their machine, matching the fragment, isn't on the machine list."""
+    return conn.execute(
+        """
+        SELECT COUNT(*)::int AS held
+        FROM rejected_rows
+        WHERE reason = 'unknown_machine' AND detail ILIKE %s
+        """,
+        (_like(fragment),),
+    ).fetchone()["held"]
+
+
 def get_run_hours(
     conn: psycopg.Connection,
     from_date: date,

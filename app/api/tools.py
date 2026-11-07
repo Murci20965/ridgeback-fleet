@@ -25,6 +25,7 @@ EventType = Literal[
 ]
 MAX_ROWS = 50
 MAX_MATCHES = 10
+CALCULATE = "calculate"
 
 NOT_RECORDED = [
     "battery or charge level",
@@ -78,6 +79,16 @@ class DataCoverageArgs(BaseModel):
     """The dates the data covers, known data problems, and what the data doesn't record."""
 
 
+class CalculateArgs(BaseModel):
+    """Arithmetic on figures that earlier tools returned. Do every sum with this, never yourself.
+    total and average use all the values. The others use exactly two: difference is the first
+    minus the second, ratio is the first over the second, and percentage is the first as a
+    percentage of the second."""
+
+    operation: Literal["total", "average", "difference", "ratio", "percentage"]
+    values: list[float] = Field(min_length=2, max_length=MAX_ROWS)
+
+
 def _outside_data(coverage: dict[str, Any] | None, from_date: date, to_date: date) -> dict | None:
     if coverage is None:
         return {"error": "no_data", "message": "No data has been loaded yet."}
@@ -104,6 +115,16 @@ def _resolve_machine(
     if len(matches) == 1:
         return matches[0], None
     if not matches:
+        held = queries.count_held_rows(conn, ref_no)
+        if held:
+            return None, {
+                "error": "machine_not_on_list",
+                "message": (
+                    f"{ref_no} sent data but isn't on the machine list, so its {held} rows are "
+                    "held out of every figure until it's added."
+                ),
+                "rows_held": held,
+            }
         return None, {
             "error": "unknown_machine",
             "message": f"No machine on the list matches {ref_no}.",
@@ -184,6 +205,40 @@ TOOLS = {
 }
 
 
+def calculate(raw_args: dict[str, Any], known_figures: set[float]) -> dict[str, Any]:
+    """Do the sum in code, using only figures the data tools returned.
+
+    The model can't feed in a number it made up, because any other input is refused.
+    """
+    try:
+        args = CalculateArgs.model_validate(raw_args)
+    except ValidationError as exc:
+        details = [f"{'.'.join(map(str, e['loc']))}: {e['msg']}" for e in exc.errors()]
+        return {"error": "invalid_arguments", "message": "; ".join(details)}
+    values = args.values
+    unknown = [v for v in values if not any(abs(v - known) < 1e-9 for known in known_figures)]
+    if unknown:
+        return {
+            "error": "unknown_figures",
+            "message": f"These aren't in any tool result: {unknown}. Call a data tool first.",
+        }
+    if args.operation == "total":
+        result = sum(values)
+    elif args.operation == "average":
+        result = sum(values) / len(values)
+    elif len(values) != 2:
+        return {"error": "invalid_arguments", "message": f"{args.operation} needs 2 values."}
+    elif args.operation == "difference":
+        result = values[0] - values[1]
+    elif values[1] == 0:
+        return {"error": "invalid_arguments", "message": "Can't divide by zero."}
+    elif args.operation == "ratio":
+        result = values[0] / values[1]
+    else:
+        result = values[0] / values[1] * 100
+    return {"operation": args.operation, "values": values, "result": round(result, 2)}
+
+
 def tool_definitions() -> list[dict[str, Any]]:
     """The tool list in the format OpenRouter expects."""
     return [
@@ -195,7 +250,10 @@ def tool_definitions() -> list[dict[str, Any]]:
                 "parameters": model.model_json_schema(),
             },
         }
-        for name, (model, _) in TOOLS.items()
+        for name, model in [
+            *((name, model) for name, (model, _) in TOOLS.items()),
+            (CALCULATE, CalculateArgs),
+        ]
     ]
 
 

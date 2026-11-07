@@ -10,6 +10,7 @@ from datetime import date
 from typing import Any
 
 from dashboard import day_label
+from queries import HARSH_EVENTS
 
 MAX_CHART_ROWS = 8
 
@@ -44,6 +45,8 @@ def _range_label(args: dict[str, Any]) -> str | None:
 
 def _measure_name(tool: str, args: dict[str, Any]) -> str:
     event_types = args.get("event_types") or []
+    if tool == "get_event_counts" and set(event_types) == set(HARSH_EVENTS):
+        return "Harsh events"
     if tool == "get_event_counts" and len(event_types) == 1:
         return f"{event_types[0]} events" if event_types[0] != "Impact" else "Impacts"
     return MEASURES[tool][1]
@@ -75,8 +78,20 @@ def chart_for(calls: list[dict[str, Any]]) -> dict[str, Any] | None:
     return None
 
 
+def _branch_the_answer_leads_with(rows: list[dict[str, Any]], answer: str) -> str | None:
+    """The top row's branch, if the answer names it before any other branch.
+
+    "Northgate had more than Airport" comes from a table headed by Harbour, so that table's top
+    row would be the wrong link.
+    """
+    top = rows[0]["reported_branch"]
+    positions = [answer.find(row["reported_branch"]) for row in rows]
+    named = [position for position in positions if position >= 0]
+    return top if named and answer.find(top) == min(named) else None
+
+
 def dashboard_link_for(
-    calls: list[dict[str, Any]], coverage: dict[str, Any] | None
+    calls: list[dict[str, Any]], coverage: dict[str, Any] | None, answer: str
 ) -> dict[str, str | None] | None:
     """The dashboard view matching the latest answer, if it has filters that can show it."""
     if coverage is None:
@@ -96,7 +111,7 @@ def dashboard_link_for(
         branch = args.get("branch")
         rows = output.get("rows") or []
         if not branch and args.get("group_by") == "branch" and rows:
-            branch = rows[0]["reported_branch"]
+            branch = _branch_the_answer_leads_with(rows, answer)
         day = start if start == end else None
         machine_type = args.get("machine_type")
         if not (day or branch or machine_type):

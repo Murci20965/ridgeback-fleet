@@ -55,6 +55,23 @@ class TestChart:
         chart = chart_for([hours_call({**WEEK, "group_by": "day"}, rows)])
         assert chart["points"][0]["label"] == "Mon 7 Sep"
 
+    def test_harsh_events_are_named(self):
+        call = {
+            "tool": "get_event_counts",
+            "args": {
+                **WEEK,
+                "group_by": "branch",
+                "event_types": ["Speeding", "Harsh Braking", "Harsh Acceleration"],
+            },
+            "output": {
+                "rows": [
+                    {"reported_branch": "Harbour", "events": 175},
+                    {"reported_branch": "Airport", "events": 99},
+                ]
+            },
+        }
+        assert chart_for([call])["title"].startswith("Harsh events by branch")
+
     def test_long_results_are_capped(self):
         rows = [{"ref_no": f"M{i}", "run_hours": float(i)} for i in range(20)]
         chart = chart_for([hours_call({**WEEK, "group_by": "machine"}, rows)])
@@ -64,7 +81,7 @@ class TestChart:
 class TestDashboardLink:
     def test_day_and_type_become_filters(self):
         call = hours_call({**TUESDAY, "group_by": "machine", "machine_type": "Forklift"}, MACHINES)
-        link = dashboard_link_for([call], COVERAGE)
+        link = dashboard_link_for([call], COVERAGE, "")
         assert link == {
             "label": "Filter the dashboard: Forklift, Tue 8 Sep",
             "day": "2026-09-08",
@@ -74,22 +91,34 @@ class TestDashboardLink:
 
     def test_the_busiest_branch_is_offered(self):
         rows = [{"reported_branch": "Harbour", "run_hours": 301.4}]
-        link = dashboard_link_for([hours_call({**WEEK, "group_by": "branch"}, rows)], COVERAGE)
+        link = dashboard_link_for(
+            [hours_call({**WEEK, "group_by": "branch"}, rows)], COVERAGE, "Harbour was busiest."
+        )
         assert link["branch"] == "Harbour"
         assert link["day"] is None
 
+    def test_a_branch_the_answer_is_not_about_gets_no_link(self):
+        rows = [
+            {"reported_branch": "Harbour", "events": 175},
+            {"reported_branch": "Northgate", "events": 153},
+            {"reported_branch": "Airport", "events": 99},
+        ]
+        call = hours_call({**WEEK, "group_by": "branch"}, rows)
+        assert dashboard_link_for([call], COVERAGE, "Northgate had 153 and Airport 99.") is None
+
     def test_the_whole_fleet_week_needs_no_link(self):
         call = hours_call({**WEEK, "group_by": "machine"}, MACHINES)
-        assert dashboard_link_for([call], COVERAGE) is None
+        assert dashboard_link_for([call], COVERAGE, "") is None
 
     def test_a_range_the_dashboard_cannot_show_gets_no_link(self):
         args = {"from_date": "2026-09-08", "to_date": "2026-09-09", "branch": "Harbour"}
-        assert dashboard_link_for([hours_call({**args, "group_by": "day"}, [])], COVERAGE) is None
+        call = hours_call({**args, "group_by": "day"}, [])
+        assert dashboard_link_for([call], COVERAGE, "") is None
 
     def test_a_machine_question_gets_no_link(self):
         call = hours_call({**TUESDAY, "group_by": "machine", "ref_no": "A1"}, MACHINES)
-        assert dashboard_link_for([call], COVERAGE) is None
+        assert dashboard_link_for([call], COVERAGE, "") is None
 
     def test_a_tool_error_gets_no_link(self):
         call = {"tool": "get_run_hours", "args": TUESDAY, "output": {"error": "outside_data"}}
-        assert dashboard_link_for([call], COVERAGE) is None
+        assert dashboard_link_for([call], COVERAGE, "") is None

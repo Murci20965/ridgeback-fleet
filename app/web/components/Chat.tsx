@@ -33,6 +33,7 @@ const TOOL_LABEL: Record<string, string> = {
   get_event_counts: "Event counts",
   get_fleet: "Fleet list",
   get_data_coverage: "Data coverage",
+  calculate: "Calculation",
 };
 
 function describeStep(step: TraceStep) {
@@ -46,6 +47,8 @@ function describeStep(step: TraceStep) {
   }
   if (Array.isArray(args.event_types)) parts.push(args.event_types.join(", "));
   if (args.group_by) parts.push(`by ${String(args.group_by).replace("_", " ")}`);
+  if (args.operation) parts.push(String(args.operation));
+  if (Array.isArray(args.values)) parts.push(args.values.join(", "));
   if (step.error) parts.push("no result");
   return parts.join(" · ");
 }

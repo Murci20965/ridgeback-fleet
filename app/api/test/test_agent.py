@@ -13,7 +13,7 @@ import main
 from agent import UNVERIFIED_ANSWER, answer_question, unsupported_numbers
 from dashboard import file_day_label
 from llm import LLMError
-from tools import run_tool, tool_definitions
+from tools import calculate, run_tool, tool_definitions
 
 TUESDAY = {"from_date": "2026-09-08", "to_date": "2026-09-08"}
 
@@ -279,3 +279,76 @@ class TestGuardOnReferences:
         final = ask(ScriptedLLM(text("P99999 isn't on the list.")), "How is P99999 doing?")[-1]
         assert final["verified"] is True
         assert final["repaired"] is False
+
+
+class TestCalculate:
+    KNOWN = {40.0, 37.0, 301.4, 8.0, 133.0}
+
+    @pytest.mark.parametrize(
+        ("operation", "values", "expected"),
+        [
+            ("difference", [40, 37], 3),
+            ("total", [40, 37], 77),
+            ("average", [40, 37], 38.5),
+            ("ratio", [301.4, 8], 37.68),
+            ("percentage", [40, 133], 30.08),
+        ],
+    )
+    def test_operations(self, operation, values, expected):
+        output = calculate({"operation": operation, "values": values}, self.KNOWN)
+        assert output["result"] == pytest.approx(expected, abs=0.01)
+
+    def test_an_invented_figure_is_refused(self):
+        output = calculate({"operation": "total", "values": [40, 9999]}, self.KNOWN)
+        assert output["error"] == "unknown_figures"
+        assert "9999" in output["message"]
+
+    def test_two_value_operations_need_two_values(self):
+        output = calculate({"operation": "difference", "values": [40, 37, 8]}, self.KNOWN)
+        assert output["error"] == "invalid_arguments"
+
+    def test_division_by_zero_is_refused(self):
+        output = calculate({"operation": "ratio", "values": [40, 0]}, self.KNOWN | {0.0})
+        assert output["error"] == "invalid_arguments"
+
+    def test_it_is_offered_to_the_model(self):
+        names = [tool["function"]["name"] for tool in tool_definitions()]
+        assert "calculate" in names
+
+    def test_a_refused_figure_does_not_become_evidence(self, database):
+        llm = ScriptedLLM(
+            call("calculate", operation="total", values=[9999, 1]),
+            text("The total was 10000."),
+            text("I can't work that out."),
+        )
+        final = ask(llm)[-1]
+        assert final["text"] == "I can't work that out."
+        assert final["repaired"] is True
+
+    def test_a_calculated_figure_passes_the_guard(self, database):
+        args = {**TUESDAY, "group_by": "branch", "event_types": ["Impact"]}
+        with db.connect() as conn:
+            rows = run_tool(conn, "get_event_counts", args)["rows"]
+        first, second = rows[0]["events"], rows[1]["events"]
+        llm = ScriptedLLM(
+            call("get_event_counts", **args),
+            call("calculate", operation="total", values=[first, second]),
+            text(f"Together they had {first + second} impacts."),
+        )
+        assert ask(llm)[-1]["verified"] is True
+
+
+def test_a_machine_with_held_rows_is_explained(database):
+    with db.connect() as conn:
+        output = run_tool(
+            conn,
+            "get_run_hours",
+            {
+                "from_date": "2026-09-07",
+                "to_date": "2026-09-13",
+                "group_by": "machine",
+                "ref_no": "FBA37633406217",
+            },
+        )
+    assert output["error"] == "machine_not_on_list"
+    assert output["rows_held"] == 21

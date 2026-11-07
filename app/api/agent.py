@@ -16,7 +16,7 @@ import queries
 from llm import LLMClient, LLMError
 from presentation import chart_for, dashboard_link_for
 from schemas import ChatTurn
-from tools import NOT_RECORDED, run_tool, tool_definitions
+from tools import CALCULATE, NOT_RECORDED, calculate, run_tool, tool_definitions
 
 log = logging.getLogger("chat")
 
@@ -30,6 +30,7 @@ TOOL_STATUS = {
     "get_event_counts": "Counting events",
     "get_fleet": "Checking the fleet list",
     "get_data_coverage": "Checking what the data covers",
+    CALCULATE: "Working it out",
 }
 
 # Numbers inside references like P57083 or FBA60251489088 aren't figures.
@@ -69,9 +70,11 @@ Riverside branches.
 {calendar}
 
 Rules:
-- Every figure must come from a tool result in this conversation. Never estimate, add, subtract, \
-average, or fill a gap yourself. To get a total, call a tool grouped so it returns that total. \
-Call a tool for every question about the data.
+- Every figure must come from a tool result in this conversation. Never estimate or fill a gap, \
+and never do arithmetic yourself. For a total, difference, average, ratio or percentage, call \
+calculate with figures from earlier tool results, and use its result. Call a tool for every \
+question about the data.
+- If asked "how much more" or "by how much", give the difference, not just the two figures.
 - If the tools can't answer, say plainly that the data can't answer it, then offer what you can \
 answer. The data doesn't record: {"; ".join(NOT_RECORDED)}.
 - If a tool returns outside_data or no_data, say which dates the data covers. Don't guess.
@@ -152,6 +155,7 @@ def answer_question(
     evidence: list[Any] = [question, coverage or {}]
     trace: list[dict[str, Any]] = []
     calls_made: list[dict[str, Any]] = []
+    known_figures: set[float] = set()
     tokens = 0
     model = None
     repaired = False
@@ -177,7 +181,9 @@ def answer_question(
                             "role": "user",
                             "content": (
                                 f"These figures aren't in any tool result: {', '.join(bad)}. "
-                                "Call a tool for them, or leave them out. Reply with only the "
+                                "Call a tool for them, using calculate for any sum, or leave "
+                                "them out. Never attach another figure to the same claim. "
+                                "Reply with only the "
                                 "corrected answer for the manager. Don't mention this check, "
                                 "and don't repeat those figures."
                             ),
@@ -188,7 +194,7 @@ def answer_question(
                     log.warning(json.dumps({"event": "guard_withheld", "figures": bad}))
                 outcome = "unverified" if bad or not answer else "answered"
                 verified = outcome == "answered"
-                link = dashboard_link_for(calls_made, coverage) if verified else None
+                link = dashboard_link_for(calls_made, coverage, answer) if verified else None
                 yield {
                     "type": "answer",
                     "text": UNVERIFIED_ANSWER if outcome == "unverified" else answer,
@@ -210,13 +216,17 @@ def answer_question(
                     args = json.loads(call["function"].get("arguments") or "{}")
                 except json.JSONDecodeError:
                     args = None
-                output = (
-                    run_tool(conn, name, args)
-                    if isinstance(args, dict)
-                    else {"error": "invalid_arguments", "message": "Arguments weren't valid JSON."}
-                )
+                if not isinstance(args, dict):
+                    output = {"error": "invalid_arguments", "message": "Arguments weren't JSON."}
+                elif name == CALCULATE:
+                    output = calculate(args, known_figures)
+                else:
+                    output = run_tool(conn, name, args)
                 evidence.append(output)
-                evidence.append(args)
+                # A refused sum's inputs may be invented, so they can't count as evidence.
+                if name != CALCULATE or "error" not in output:
+                    evidence.append(args)
+                _collect_numbers(output, known_figures)
                 if isinstance(args, dict):
                     calls_made.append({"tool": name, "args": args, "output": output})
                 trace.append(
