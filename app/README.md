@@ -4,6 +4,13 @@ One hosted application: a FastAPI service (`api/`) and a Next.js interface (`web
 
 Next.js only displays data. All database access, business logic and LLM calls are in FastAPI, and the dashboard and chat share [`queries.py`](api/queries.py), so their figures can't disagree.
 
+## Pages
+
+| Address | Page |
+| --- | --- |
+| `/` | Welcome page with a button through to the dashboard. It isn't a sign-in. Old links with filters redirect to the dashboard |
+| `/dashboard` | The dashboard and chat. Filters live in the URL, such as `?day=2026-09-08&branch=Riverside` |
+
 ## Headline
 
 The sentence at the top of the dashboard comes from `build_headline()` in [`dashboard.py`](api/dashboard.py). It says only what the KPI tiles don't, such as the busiest branch or the day with the most impacts. It uses plain rules rather than the LLM, so it costs nothing, responds instantly and can't invent anything.

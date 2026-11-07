@@ -91,7 +91,11 @@ Tables, views and design decisions are in [`docs/data_model.md`](docs/data_model
 - **Truncated file.** The file delivered on 12 Sep ends in a cut-off row. Its good rows load and the file is marked `partial`. Hours for that day may read low, particularly for `R94267`.
 - **Hours per driver.** Not offered, because rows at shift changes overlap and can't be attributed reliably. The chat says so.
 - **Schedule.** GitHub Actions can start scheduled runs late and pauses them after long repo inactivity. That's acceptable for this assessment, and the [design](docs/solution_design.png) shows retries and alerts for production.
-- **Authentication.** The brief asks for a public URL, so the app has no login. A real deployment would need one, because driver names are personal data.
+- **Authentication.** The brief asks for a public URL, so the app has no login. The first page is a welcome page with a button through to the dashboard, not a sign-in. A real deployment would need one, because driver names are personal data.
+
+## Credits
+
+Welcome page photo by [Duc LE](https://unsplash.com/photos/a-large-warehouse-filled-with-lots-of-machines-p0VP_TOAd5E) on Unsplash, free to use under the [Unsplash License](https://unsplash.com/license). It's slightly blurred on the page to soften brand names on the machines.
 
 ## AI tools used
 
