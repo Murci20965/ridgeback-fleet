@@ -15,10 +15,11 @@ from fastapi import APIRouter, FastAPI, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 
 import db
+import queries
 from agent import answer_question
 from dashboard import DateOutsideData, build_dashboard
 from llm import OpenRouterClient
-from schemas import Branch, ChatRequest, Dashboard, MachineType
+from schemas import Branch, ChatRequest, Dashboard, MachineType, WeeklyReport
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 log = logging.getLogger("api")
@@ -82,6 +83,22 @@ def dashboard(
     except psycopg.Error as exc:
         log.exception(json.dumps({"event": "dashboard_error", "detail": type(exc).__name__}))
         raise HTTPException(status_code=503, detail="Fleet data is unavailable.") from exc
+
+
+@router.get("/reports/latest", response_model=WeeklyReport)
+def latest_report() -> WeeklyReport:
+    try:
+        with db.connect() as conn:
+            report = queries.get_latest_report(conn)
+    except psycopg.errors.UndefinedTable:
+        # The pipeline creates the table the first time it publishes a report.
+        report = None
+    except psycopg.Error as exc:
+        log.exception(json.dumps({"event": "report_error", "detail": type(exc).__name__}))
+        raise HTTPException(status_code=503, detail="The report is unavailable.") from exc
+    if report is None:
+        raise HTTPException(status_code=404, detail="No report has been published yet.")
+    return report
 
 
 @router.post("/chat")

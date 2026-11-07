@@ -85,3 +85,16 @@ CREATE TABLE IF NOT EXISTS ingest_runs (
 );
 
 CREATE INDEX IF NOT EXISTS ingest_runs_file_idx ON ingest_runs (file_name, id DESC);
+
+-- One row per week, so reruns can't duplicate a report. The figures are stored as they were when
+-- the report was written, because it's a record. Commentary is empty if the LLM couldn't write
+-- text that passed the figure check.
+CREATE TABLE IF NOT EXISTS weekly_reports (
+    week_start       DATE PRIMARY KEY,
+    week_end         DATE NOT NULL,
+    generated_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    facts            JSONB NOT NULL,
+    facts_checksum   CHAR(64) NOT NULL,
+    commentary       JSONB,
+    commentary_model TEXT
+);

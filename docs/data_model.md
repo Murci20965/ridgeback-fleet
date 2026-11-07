@@ -61,9 +61,20 @@ erDiagram
         int rows_duplicate
         text error
     }
+    weekly_reports {
+        date week_start PK
+        date week_end
+        timestamptz generated_at
+        jsonb facts
+        char64 facts_checksum
+        jsonb commentary
+        text commentary_model
+    }
 ```
 
 `rejected_rows` and `ingest_runs` link to files by name. They have no foreign keys on purpose, because they must be able to record bad data, such as a machine that isn't in `machines`.
+
+`weekly_reports` stores each report's figures as they were when it was written, because a report is a record. Its `commentary` is empty if the LLM couldn't write text that passed the figure check.
 
 ## Reporting views
 

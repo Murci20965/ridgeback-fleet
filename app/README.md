@@ -27,6 +27,7 @@ FastAPI publishes the full contract at `/api/v1/docs`. Models are in [`schemas.p
 | --- | --- |
 | `GET /api/v1/health` | Liveness check |
 | `GET /api/v1/dashboard?day=&branch=&machine_type=` | All dashboard data for one view. With no `day`, returns the latest week. A date outside the data returns 422 |
+| `GET /api/v1/reports/latest` | The newest weekly report: its figures, commentary and model. Returns 404 before the first report |
 | `POST /api/v1/chat` | Body: `{question, history}`. Streams newline-delimited JSON: `status` updates, then one `answer` or `error` |
 
 ## How the chat answers

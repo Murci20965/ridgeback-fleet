@@ -431,6 +431,19 @@ def get_exceptions(
     }
 
 
+def get_latest_report(conn: psycopg.Connection) -> dict[str, Any] | None:
+    """The newest weekly report, or None before the first one is published."""
+    return conn.execute(
+        """
+        SELECT week_start, week_end, generated_at, facts, commentary,
+               commentary_model AS model
+        FROM weekly_reports
+        ORDER BY week_start DESC
+        LIMIT 1
+        """
+    ).fetchone()
+
+
 def get_pipeline_status(conn: psycopg.Connection) -> dict[str, Any] | None:
     """Totals from the latest attempt on each file."""
     row = conn.execute(

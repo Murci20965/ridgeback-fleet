@@ -24,7 +24,9 @@ class LLMError(Exception):
 
 
 class LLMClient(Protocol):
-    def complete(self, messages: list[dict], tools: list[dict]) -> dict[str, Any]: ...
+    def complete(
+        self, messages: list[dict], tools: list[dict], tool_choice: str | dict = "auto"
+    ) -> dict[str, Any]: ...
 
 
 class OpenRouterClient:
@@ -32,7 +34,9 @@ class OpenRouterClient:
         configured = os.environ.get("OPENROUTER_MODELS")
         self.models = models or (tuple(configured.split(",")) if configured else DEFAULT_MODELS)
 
-    def complete(self, messages: list[dict], tools: list[dict]) -> dict[str, Any]:
+    def complete(
+        self, messages: list[dict], tools: list[dict], tool_choice: str | dict = "auto"
+    ) -> dict[str, Any]:
         key = os.environ.get("OPENROUTER_API_KEY")
         if not key:
             raise LLMError("The assistant isn't configured yet.", "OPENROUTER_API_KEY is not set")
@@ -48,7 +52,7 @@ class OpenRouterClient:
                     "models": list(self.models),
                     "messages": messages,
                     "tools": tools,
-                    "tool_choice": "auto",
+                    "tool_choice": tool_choice,
                     "temperature": 0,
                     "max_tokens": MAX_OUTPUT_TOKENS,
                 },

@@ -1,0 +1,35 @@
+name: Weekly report
+
+on:
+  schedule:
+    # 05:00 UTC on Monday is 07:00 SAST, three hours after the load that delivers Sunday's events.
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Write the commentary again, even if the figures haven't changed
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-report
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - run: pip install -r app/api/requirements.txt
+      - name: Publish the report
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+        run: python pipeline/weekly_report.py $FORCE_FLAG

@@ -72,6 +72,23 @@ A file fails if its name doesn't match the expected pattern, it's empty or isn't
 
 **Missing days.** A gap between delivery dates is logged as `deliveries_missing`. Sending an alert on this is part of the [production design](../docs/solution_design.png) rather than this build.
 
+## Weekly report
+
+`weekly_report.py` publishes a summary of the latest Monday-to-Sunday week. [GitHub Actions](../.github/workflows/weekly-report.yml) runs it every Monday at 07:00 SAST, three hours after the load that delivers Sunday's events. The app shows it at `/report`, where it can be saved as a PDF.
+
+```bash
+pip install -r app/api/requirements.txt
+python pipeline/weekly_report.py
+```
+
+It needs `DATABASE_URL`, and `OPENROUTER_API_KEY` for the commentary. In GitHub Actions, both are repository secrets.
+
+- **Figures come from code.** It reuses the dashboard's `build_dashboard`, so the report can't disagree with the dashboard.
+- **The LLM only writes the commentary.** It's forced to submit through a typed tool. Every figure and machine reference must appear in the week's figures, or it gets up to 2 more attempts.
+- **It fails safely.** If the model is down or its text never passes, the report still publishes with the figures, and the next run tries the commentary again.
+- **Safe to rerun.** There's one row per week in `weekly_reports`. If the figures haven't changed, the run does nothing and costs nothing. `--force` writes the commentary again.
+- **No data fails the run.** If there's nothing to report, it exits with code 1 so the run shows as failed.
+
 ## Test it
 
 Unit tests need nothing else. Integration tests need a disposable Postgres, and they wipe the database named in `TEST_DATABASE_URL`.

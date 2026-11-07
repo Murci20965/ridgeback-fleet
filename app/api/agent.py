@@ -45,6 +45,9 @@ NUMBER_WORDS = {
 }
 NUMBER_WORD = re.compile(rf"\b({'|'.join(NUMBER_WORDS)})\b", re.IGNORECASE)
 
+# Machine references look like P57083, R88897 or FBA60251489088.
+MACHINE_REFERENCE = re.compile(r"\b[A-Z]{1,4}\d{5,}\b")
+
 
 def system_prompt(coverage: dict[str, Any] | None) -> str:
     if coverage is None:
@@ -125,6 +128,12 @@ def unsupported_numbers(answer: str, evidence: list[Any]) -> list[str]:
         if NUMBER_WORDS[word.lower()] not in allowed:
             unsupported.append(word)
     return unsupported
+
+
+def unknown_references(text: str, evidence: list[Any]) -> list[str]:
+    """Return machine references in the text that the evidence doesn't contain."""
+    known = json.dumps(evidence, default=str)
+    return [ref for ref in MACHINE_REFERENCE.findall(text) if ref not in known]
 
 
 def answer_question(

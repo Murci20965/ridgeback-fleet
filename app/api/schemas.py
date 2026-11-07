@@ -102,6 +102,41 @@ class Dashboard(BaseModel):
     pipeline: PipelineStatus | None = None
 
 
+class Commentary(BaseModel):
+    """What the LLM writes for the weekly report. The figures never come from here."""
+
+    summary: str = Field(min_length=1, max_length=800)
+    highlights: list[str] = Field(min_length=1, max_length=5)
+    checks: list[str] = Field(max_length=5)
+
+
+class ReportFacts(BaseModel):
+    """The figures in a weekly report, stored as they were when it was written."""
+
+    week_start: date
+    week_end: date
+    days_with_data: int
+    headline: str
+    kpis: Kpis
+    branches: list[BranchRow]
+    daily: list[DailySummary]
+    top_machines: list[MachineRow]
+    least_used_machines: list[MachineRow]
+    inactive_machines: list[MachineRow]
+    top_drivers: list[DriverRow]
+    attention: list[AttentionItem]
+    pipeline: PipelineStatus | None
+
+
+class WeeklyReport(BaseModel):
+    week_start: date
+    week_end: date
+    generated_at: datetime
+    facts: ReportFacts
+    commentary: Commentary | None
+    model: str | None
+
+
 class ChatTurn(BaseModel):
     role: Literal["user", "assistant"]
     content: str = Field(max_length=4000)
