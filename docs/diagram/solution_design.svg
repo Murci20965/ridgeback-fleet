@@ -21,9 +21,9 @@
 <text x="440" y="229.5" font-size="19" fill="#3a3a3c">in this build</text>
 <text x="800" y="134" font-size="23" font-weight="600" fill="#1d1d1f">Scheduled runner</text>
 <rect x="800" y="144" width="320" height="110" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
-<text x="820" y="179.5" font-size="19" fill="#3a3a3c">GitHub Actions cron, 04:00 SAST</text>
-<text x="820" y="204.5" font-size="19" fill="#3a3a3c">Retries hourly until 07:00</text>
-<text x="820" y="229.5" font-size="19" fill="#3a3a3c">Option: n8n Schedule trigger</text>
+<text x="820" y="179.5" font-size="19" fill="#3a3a3c">GitHub Actions cron or n8n, SAST</text>
+<text x="820" y="204.5" font-size="19" fill="#3a3a3c">Daily 04:00, retries until 07:00</text>
+<text x="820" y="229.5" font-size="19" fill="#3a3a3c">Monday 07:00: weekly report</text>
 <text x="1180" y="134" font-size="23" font-weight="600" fill="#1d1d1f">Python pipeline</text>
 <rect x="1180" y="144" width="320" height="110" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
 <text x="1200" y="179.5" font-size="19" fill="#3a3a3c">Cleans rows, oldest file first</text>
@@ -39,7 +39,7 @@
 <text x="60" y="422.0" font-size="19" fill="#1d1d1f">Bad files moved to quarantine</text>
 <text x="540" y="354" font-size="23" font-weight="600" fill="#1d1d1f">Neon Postgres</text>
 <rect x="540" y="364" width="780" height="80" rx="12" fill="#dcdce2" stroke="#86868b" stroke-width="2"/>
-<text x="560" y="397.0" font-size="19" fill="#1d1d1f">telemetry_events, machines, drivers, branches</text>
+<text x="560" y="397.0" font-size="19" fill="#1d1d1f">telemetry_events, machines, drivers, branches, weekly_reports</text>
 <text x="560" y="422.0" font-size="19" fill="#1d1d1f">Views: v_machine_daily_hours, v_driver_events, v_branch_daily</text>
 <text x="1360" y="354" font-size="23" font-weight="600" fill="#1d1d1f">Run log</text>
 <rect x="1360" y="364" width="520" height="80" rx="12" fill="#dcdce2" stroke="#86868b" stroke-width="2"/>
@@ -51,7 +51,7 @@
 <text x="60" y="675.0" font-size="19" fill="#3a3a3c">tablet or desktop</text>
 <text x="370" y="544" font-size="23" font-weight="600" fill="#1d1d1f">Next.js on Vercel</text>
 <rect x="370" y="554" width="320" height="80" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
-<text x="390" y="587.0" font-size="19" fill="#3a3a3c">Dashboard and chat UI</text>
+<text x="390" y="587.0" font-size="19" fill="#3a3a3c">Dashboard, report and chat UI</text>
 <text x="390" y="612.0" font-size="19" fill="#3a3a3c">No secrets, no database</text>
 <text x="760" y="544" font-size="23" font-weight="600" fill="#1d1d1f">FastAPI: /api/v1/dashboard</text>
 <rect x="760" y="554" width="350" height="80" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
@@ -60,7 +60,7 @@
 <text x="1190" y="544" font-size="23" font-weight="600" fill="#0058b0">OpenRouter (LLM call)</text>
 <rect x="1190" y="554" width="320" height="80" rx="12" fill="#dcebfc" stroke="#0071e3" stroke-width="2"/>
 <text x="1210" y="587.0" font-size="19" fill="#1d1d1f">Claude Haiku 5.5, with fallback</text>
-<text x="1210" y="612.0" font-size="19" fill="#1d1d1f">Called only from FastAPI</text>
+<text x="1210" y="612.0" font-size="19" fill="#1d1d1f">Called by chat and weekly report</text>
 <text x="370" y="670" font-size="23" font-weight="600" fill="#1d1d1f">FastAPI: /api/v1/chat</text>
 <rect x="370" y="680" width="320" height="80" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
 <text x="390" y="713.0" font-size="19" fill="#3a3a3c">Rate and length limits</text>
@@ -75,15 +75,16 @@
 <text x="1210" y="738.0" font-size="19" fill="#3a3a3c">one retry, then withheld</text>
 <text x="1580" y="544" font-size="23" font-weight="600" fill="#1d1d1f">Where secrets live</text>
 <rect x="1580" y="554" width="300" height="286" rx="12" fill="#1d1d1f" stroke="#1d1d1f" stroke-width="2"/>
-<text x="1600" y="602.5" font-size="19" fill="#ffffff">Vercel env vars:</text>
-<text x="1600" y="627.5" font-size="19" fill="#ffffff">OPENROUTER_API_KEY</text>
-<text x="1600" y="652.5" font-size="19" fill="#ffffff">DATABASE_URL (read-only)</text>
-<text x="1600" y="677.5" font-size="19" fill="#ffffff">The key has a spend cap</text>
-<text x="1600" y="702.5" font-size="19" fill="#ffffff"></text>
-<text x="1600" y="727.5" font-size="19" fill="#ffffff">GitHub Actions secret:</text>
-<text x="1600" y="752.5" font-size="19" fill="#ffffff">DATABASE_URL (owner)</text>
-<text x="1600" y="777.5" font-size="19" fill="#ffffff"></text>
-<text x="1600" y="802.5" font-size="19" fill="#ffffff">Never in the repo or browser</text>
+<text x="1600" y="590.0" font-size="19" fill="#ffffff">Vercel env vars:</text>
+<text x="1600" y="615.0" font-size="19" fill="#ffffff">OPENROUTER_API_KEY</text>
+<text x="1600" y="640.0" font-size="19" fill="#ffffff">DATABASE_URL (read-only)</text>
+<text x="1600" y="665.0" font-size="19" fill="#ffffff">The key has a spend cap</text>
+<text x="1600" y="690.0" font-size="19" fill="#ffffff"></text>
+<text x="1600" y="715.0" font-size="19" fill="#ffffff">GitHub Actions secrets:</text>
+<text x="1600" y="740.0" font-size="19" fill="#ffffff">DATABASE_URL (owner)</text>
+<text x="1600" y="765.0" font-size="19" fill="#ffffff">OPENROUTER_API_KEY</text>
+<text x="1600" y="790.0" font-size="19" fill="#ffffff"></text>
+<text x="1600" y="815.0" font-size="19" fill="#ffffff">Never in the repo or browser</text>
 <text x="40" y="936" font-size="23" font-weight="600" fill="#b00012">Late data</text>
 <rect x="40" y="946" width="437" height="106" rx="12" fill="#ffffff" stroke="#d70015" stroke-width="2"/>
 <text x="60" y="979.5" font-size="19" fill="#3a3a3c">Rows keep their event date, up to 7 days old</text>

@@ -14,6 +14,7 @@ A daily pipeline, dashboard and chat assistant for Ridgeback's forklifts, reach 
 - [x] **Task 2.** Ingestion pipeline in [`pipeline/`](pipeline/README.md), scheduled by [GitHub Actions](.github/workflows/ingest.yml)
 - [x] **Task 3.** Hosted dashboard and chat in [`app/`](app/README.md), and [`docs/chat_results.md`](docs/chat_results.md) with 5 test questions and the answers
 - [x] **Task 4.** Solution design diagram in `docs/`, as the source file and a PNG
+- [x] **Stretch goal.** A [weekly report](pipeline/README.md#weekly-report) every Monday at 07:00, shown at `/report` and ready to save as a PDF
 - [x] No API keys in the repo or in front-end code
 - [x] The sections below are filled in
 
@@ -24,9 +25,9 @@ data/
   incoming/          7 daily telemetry files, as delivered
   machine_list.csv   one row per machine
 docs/                glossary, data model, diagram, chat results, model evaluation
-pipeline/            cleaning rules, loader, SQL schema and views
-app/api/             FastAPI: dashboard data and the chat agent
-app/web/             Next.js: the dashboard and chat interface
+pipeline/            cleaning rules, loader, weekly report, SQL schema and views
+app/api/             FastAPI: dashboard data, reports and the chat agent
+app/web/             Next.js: the dashboard, report and chat interface
 ```
 
 ## How it fits together
@@ -41,6 +42,9 @@ flowchart LR
     F <-->|server-side only| G[OpenRouter]
     E --> H[Operations manager]
     F --> H
+    I[Monday 07:00 SAST, GitHub Actions] --> J[Weekly report]
+    J -->|figures from the dashboard's code| C
+    J <-->|commentary, checked| G
 ```
 
 ## How to run the pipeline
@@ -91,6 +95,7 @@ Tables, views and design decisions are in [`docs/data_model.md`](docs/data_model
 - **Truncated file.** The file delivered on 12 Sep ends in a cut-off row. Its good rows load and the file is marked `partial`. Hours for that day may read low, particularly for `R94267`.
 - **Hours per driver.** Not offered, because rows at shift changes overlap and can't be attributed reliably. The chat says so.
 - **Schedule.** GitHub Actions can start scheduled runs late and pauses them after long repo inactivity. That's acceptable for this assessment, and the [design](docs/solution_design.png) shows retries and alerts for production.
+- **Weekly report period.** The brief says "the previous week". The report covers the latest Monday-to-Sunday week in the data, which is the previous week on a real Monday and still works on this fixed sample from September.
 - **Authentication.** The brief asks for a public URL, so the app has no login. The first page is a welcome page with a button through to the dashboard, not a sign-in. A real deployment would need one, because driver names are personal data.
 
 ## Credits
@@ -107,5 +112,5 @@ I used Claude Code (Claude Opus 5.5) to plan the work, profile the data, write t
 - Connect the pipeline to the real SFTP folder, archive raw files, and send alerts for late, failed and partial files.
 - Move the rate limit to shared storage, because the current limit applies per server instance.
 - Add a driver and machine lookup in the chat, so it can correct misspelt names.
-- Add week-on-week comparison once more than one week of data exists.
-- Add the Monday 07:00 weekly summary report (the stretch goal).
+- Add week-on-week comparison to the dashboard and report once more than one week of data exists.
+- Email the weekly report to the operations manager, using a transactional mail provider.
