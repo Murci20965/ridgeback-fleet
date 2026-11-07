@@ -2,24 +2,16 @@
 
 import { useEffect } from "react";
 
-export const INTRO_SEEN_KEY = "intro-seen";
-
 const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
 const EASE_MOVE = "cubic-bezier(0.77, 0, 0.175, 1)";
 const MAX_PHOTO_WAIT_MS = 1500;
 
-// Runs before first paint, so the card doesn't flash before the animation starts. Without
-// JavaScript this never runs and the card simply shows, so nobody can lose the way in.
-// Adding ?intro=1 replays it, for testing and for recording a demo.
-export const INTRO_SCRIPT = `try{if((location.search.indexOf("intro=1")>-1||!sessionStorage.getItem("${INTRO_SEEN_KEY}"))&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.dataset.intro="play"}catch(e){}`;
+// Runs before first paint, so the card doesn't flash before the animation starts. It plays on
+// every page load. Without JavaScript this never runs and the card simply shows.
+export const INTRO_SCRIPT = `try{if(!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.dataset.intro="play"}catch(e){}`;
 
 function finishIntro() {
   delete document.documentElement.dataset.intro;
-  try {
-    sessionStorage.setItem(INTRO_SEEN_KEY, "1");
-  } catch {
-    // Storage can be blocked. The intro would just play again on the next visit.
-  }
 }
 
 /** Browsers can load a page before anyone sees it: preloading a typed address, or a tab opened
