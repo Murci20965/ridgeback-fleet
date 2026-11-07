@@ -8,6 +8,7 @@ interface FilterContextValue {
   filters: Filters;
   isPending: boolean;
   setFilter: (key: keyof Filters, value: string | null) => void;
+  setFilters: (next: Filters) => void;
   clearFilters: () => void;
 }
 
@@ -58,7 +59,7 @@ export function FilterProvider({
   );
 
   return (
-    <FilterContext.Provider value={{ filters: optimistic, isPending, setFilter, clearFilters }}>
+    <FilterContext.Provider value={{ filters: optimistic, isPending, setFilter, setFilters: navigate, clearFilters }}>
       {children}
     </FilterContext.Provider>
   );

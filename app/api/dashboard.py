@@ -15,7 +15,7 @@ class DateOutsideData(ValueError):
     pass
 
 
-def _day(value: date) -> str:
+def day_label(value: date) -> str:
     return f"{value:%a} {value.day} {value:%b}"
 
 
@@ -30,7 +30,7 @@ def file_event_day(file_name: str) -> date | None:
 
 def file_day_label(file_name: str) -> str | None:
     day = file_event_day(file_name)
-    return _day(day) if day else None
+    return day_label(day) if day else None
 
 
 def _concerns_range(file_name: str, from_date: date, to_date: date) -> bool:
@@ -85,7 +85,7 @@ def build_attention(
             }
         )
     for reset in exceptions["meter_resets"]:
-        day = _day(reset["event_date"])
+        day = day_label(reset["event_date"])
         items.append(
             {
                 "severity": "warning",
@@ -103,7 +103,7 @@ def build_attention(
                 "title": f"{move['ref_no']} is reporting from {move['reported_branch']}",
                 "detail": (
                     f"It's assigned to {move['assigned_branch']}. "
-                    f"Seen {_day(move['first_date'])} to {_day(move['last_date'])}."
+                    f"Seen {day_label(move['first_date'])} to {day_label(move['last_date'])}."
                 ),
                 "question": (
                     f"How many hours did {move['ref_no']} run at "

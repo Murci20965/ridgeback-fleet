@@ -3,8 +3,10 @@
 import { ArrowUp, ArrowUpRight, ChevronDown, Database, MessageCircle, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useChatBridge } from "@/components/ChatBridge";
+import { useFilters } from "@/components/FilterProvider";
+import { BarChart } from "@/components/ReportCharts";
 import { shortDate } from "@/lib/format";
-import type { ChatEvent, Coverage, TraceStep } from "@/lib/types";
+import type { AnswerChart, ChatEvent, Coverage, DashboardLink, TraceStep } from "@/lib/types";
 
 const MAX_QUESTION_LENGTH = 500;
 const MAX_HISTORY_MESSAGES = 6;
@@ -22,6 +24,8 @@ interface Message {
   text: string;
   failed?: boolean;
   trace?: TraceStep[];
+  chart?: AnswerChart | null;
+  dashboardLink?: DashboardLink | null;
 }
 
 const TOOL_LABEL: Record<string, string> = {
@@ -72,6 +76,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
   const [isDocked, setIsDocked] = useState(true);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const { pending, clearPending } = useChatBridge();
+  const { setFilters } = useFilters();
   const nextId = useRef(1);
   const abort = useRef<AbortController | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -177,7 +182,13 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
           if (event.type === "answer") {
             finished = true;
             setStatus(null);
-            addMessage({ role: "assistant", text: event.text, trace: event.trace });
+            addMessage({
+              role: "assistant",
+              text: event.text,
+              trace: event.trace,
+              chart: event.chart,
+              dashboardLink: event.dashboard_link,
+            });
           }
           if (event.type === "error") {
             finished = true;
@@ -300,6 +311,31 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                     <p className={`whitespace-pre-line ${message.failed ? "text-ink-2" : ""}`}>
                       {message.text}
                     </p>
+                    {message.chart && (
+                      <div className="mt-3 rounded-[14px] bg-surface-2 p-3 [--page:var(--filter)]">
+                        <BarChart
+                          title={message.chart.title}
+                          points={message.chart.points.map((point) => ({
+                            ...point,
+                            detail: `${point.label}: ${point.display}`,
+                          }))}
+                        />
+                      </div>
+                    )}
+                    {message.dashboardLink && (
+                      <button
+                        onClick={() => {
+                          const { day, branch, type } = message.dashboardLink!;
+                          setFilters({ day, branch, type });
+                          // On a phone the sheet covers the dashboard, so it moves aside.
+                          setIsOpen(false);
+                        }}
+                        className="pressable mt-2 flex min-h-9 items-center gap-1 text-left text-[13px] text-accent-ink hover:underline"
+                      >
+                        {message.dashboardLink.label}
+                        <ArrowUpRight size={14} className="shrink-0" aria-hidden />
+                      </button>
+                    )}
                     {message.trace && message.trace.length > 0 && (
                       <AnswerTrace trace={message.trace} />
                     )}

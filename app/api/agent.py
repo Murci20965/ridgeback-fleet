@@ -14,6 +14,7 @@ import psycopg
 
 import queries
 from llm import LLMClient, LLMError
+from presentation import chart_for, dashboard_link_for
 from schemas import ChatTurn
 from tools import NOT_RECORDED, run_tool, tool_definitions
 
@@ -150,6 +151,7 @@ def answer_question(
     definitions = tool_definitions()
     evidence: list[Any] = [question, coverage or {}]
     trace: list[dict[str, Any]] = []
+    calls_made: list[dict[str, Any]] = []
     tokens = 0
     model = None
     repaired = False
@@ -166,7 +168,7 @@ def answer_question(
             if not calls:
                 answer = (message.get("content") or "").strip()
                 # Tool results aren't in earlier chat turns' evidence, so past answers don't count.
-                bad = unsupported_numbers(answer, evidence)
+                bad = unsupported_numbers(answer, evidence) + unknown_references(answer, evidence)
                 if bad and not repaired:
                     repaired = True
                     messages.append({"role": "assistant", "content": answer})
@@ -185,10 +187,15 @@ def answer_question(
                 if bad:
                     log.warning(json.dumps({"event": "guard_withheld", "figures": bad}))
                 outcome = "unverified" if bad or not answer else "answered"
+                verified = outcome == "answered"
+                link = dashboard_link_for(calls_made, coverage) if verified else None
                 yield {
                     "type": "answer",
                     "text": UNVERIFIED_ANSWER if outcome == "unverified" else answer,
-                    "verified": outcome == "answered",
+                    "verified": verified,
+                    "repaired": repaired,
+                    "chart": chart_for(calls_made) if verified else None,
+                    "dashboard_link": link,
                     "trace": trace,
                     "model": model,
                     "tokens": tokens,
@@ -210,6 +217,8 @@ def answer_question(
                 )
                 evidence.append(output)
                 evidence.append(args)
+                if isinstance(args, dict):
+                    calls_made.append({"tool": name, "args": args, "output": output})
                 trace.append(
                     {
                         "tool": name,

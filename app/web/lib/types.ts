@@ -141,7 +141,27 @@ export interface TraceStep {
   error: string | null;
 }
 
+export interface AnswerChart {
+  title: string;
+  points: { label: string; value: number; display: string }[];
+}
+
+export interface DashboardLink {
+  label: string;
+  day: string | null;
+  branch: Branch | null;
+  type: MachineType | null;
+}
+
 export type ChatEvent =
   | { type: "status"; text: string }
-  | { type: "answer"; text: string; verified: boolean; trace: TraceStep[]; model: string | null }
+  | {
+      type: "answer";
+      text: string;
+      verified: boolean;
+      trace: TraceStep[];
+      model: string | null;
+      chart: AnswerChart | null;
+      dashboard_link: DashboardLink | null;
+    }
   | { type: "error"; message: string };
