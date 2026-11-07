@@ -56,12 +56,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                   </PendingFrame>
                   <FilterBar coverage={data.coverage} />
                   <PendingFrame>
-                    <KpiRow
-                      kpis={data.kpis}
-                      daily={data.daily}
-                      weekStart={data.coverage.week_start}
-                      selectedDay={filters.day}
-                    />
+                    <KpiRow kpis={data.kpis} />
                     <div className="rise mt-5 grid gap-5 xl:grid-cols-2">
                       <AttentionList items={data.attention} />
                       <DriverTable drivers={data.drivers} />

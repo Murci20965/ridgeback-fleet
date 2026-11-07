@@ -6,7 +6,7 @@ export function Headline({ dates, text }: { dates: string; text: string }) {
   return (
     <div className="mt-5 mb-3 lg:mt-3">
       <p className="text-[13px] font-medium text-ink-2">{dates}</p>
-      <h2 className="mt-1.5 max-w-4xl text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-balance md:text-[34px]">
+      <h2 className="mt-1.5 text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-balance md:text-[34px] lg:text-wrap">
         {lead} <span className="text-ink-2">{rest.join(" ")}</span>
       </h2>
     </div>
