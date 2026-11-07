@@ -67,12 +67,14 @@ I compared both on [14 fixed questions](docs/model_evaluation.md) with answers k
 
 | Model | Passed | Avg tokens per question | Avg seconds per question | Price per million tokens, input / output |
 | --- | --- | --- | --- | --- |
-| Claude Haiku 5.5 | 14 of 14 | 5,455 | 12.7 | $0.10 / $0.50 |
-| Claude Sonnet 5.5 | 14 of 14 | 5,408 | 14.7 | $2.00 / $10.00 |
+| Claude Haiku 5.5 | 14 of 14 | 6,537 | 8.5 | $0.10 / $0.50 |
+| Claude Sonnet 5.5 | 14 of 14 | 6,366 | 9.2 | $2.00 / $10.00 |
 
 The job is choosing the right tool and phrasing a short answer from its result, and the guard checks every figure afterwards. Haiku matched Sonnet on accuracy at a twentieth of the price, so it fits a USD 10 cap, and it was slightly faster in this run. Sonnet also sometimes added commentary nobody asked for, which is a risk in a data assistant. Sonnet stays as the fallback because availability matters more than cost during an outage. Prices are from OpenRouter's model list on 7 Nov 2026, and 14 questions is a small sample.
 
-The guard earned its place during testing. Asked about `R88897`, Haiku correctly returned 8.11 and 13.87 hours, then added its own total of 22.98. The real total is 21.98. The guard rejected the figure, and the retry gave a clean answer.
+The guard earned its place during testing. Asked about `R88897`, Haiku correctly returned 8.11 and 13.87 hours, then added its own total of 22.98. The real total is 21.98. The guard rejected the figure, and the retry gave a clean answer. Because models can't be trusted with sums, the agent now has a `calculate` tool. The code does the arithmetic, and it refuses any input that a data tool didn't return.
+
+A separate [stress test](docs/agent_stress_test.md) asks 30 questions that try to make the chat fabricate, using invented machines, false premises, pressure to guess, sums, comparisons and prompt injection. In its latest run, on Haiku, all 30 passed with no fabrications, and the guard sent 3 answers back for a retry. It's one run, and it only catches what its patterns look for.
 
 ## Data model
 

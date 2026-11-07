@@ -52,7 +52,9 @@ sequenceDiagram
 
 | Risk | How it's handled |
 | --- | --- |
-| Made-up figures | A guard compares each figure with tool results. It allows one retry, then withholds the answer |
+| Made-up figures | A guard compares each figure and machine reference with tool results. It allows one retry, then withholds the answer |
+| Wrong arithmetic | A `calculate` tool does every sum in code, and refuses any input a data tool didn't return |
+| Misleading charts | Charts and dashboard links are built by code from tool results, never by the LLM |
 | Unanswerable questions | The prompt lists what the data doesn't record, and tools report dates outside the data |
 | Wrong machine | A partial reference such as `4813` is accepted only if it matches one machine. With several matches, the chat asks which one is meant |
 | Wrong dates | The server gives the model the calendar for the latest week, and the answer states the dates used |
