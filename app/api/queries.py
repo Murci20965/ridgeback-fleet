@@ -61,6 +61,14 @@ def get_coverage(conn: psycopg.Connection) -> dict[str, Any] | None:
     return {**row, "week_start": week_start, "week_end": week_start + timedelta(days=6)}
 
 
+def find_machines(conn: psycopg.Connection, fragment: str) -> list[str]:
+    """Machines whose reference contains the fragment, ignoring case."""
+    rows = conn.execute(
+        "SELECT ref_no FROM machines WHERE ref_no ILIKE %s ORDER BY ref_no", (_like(fragment),)
+    ).fetchall()
+    return [row["ref_no"] for row in rows]
+
+
 def get_run_hours(
     conn: psycopg.Connection,
     from_date: date,

@@ -61,6 +61,16 @@ CASES = (
         ("Mpho Molefe", "Yusuf Govender", r"\b7\b"),
     ),
     Case(
+        "How many hours did the machine ending 4813 run on Tuesday?",
+        "partial match",
+        ("FBA33639374813", r"10\.05"),
+    ),
+    Case(
+        "How many hours did machine R8 run this week?",
+        "partial match, must ask",
+        ("R80275", "R88897"),
+    ),
+    Case(
         "What's the battery level on P10942?",
         "decline",
         ("battery",),

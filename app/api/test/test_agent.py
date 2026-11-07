@@ -125,6 +125,43 @@ class TestTools:
             )
         assert output["rows"] == []
 
+    def test_partial_reference_finds_one_machine(self, database):
+        with db.connect() as conn:
+            output = run_tool(
+                conn, "get_run_hours", {**TUESDAY, "group_by": "machine", "ref_no": "4813"}
+            )
+        assert output["rows"][0]["ref_no"] == "FBA33639374813"
+
+    def test_partial_reference_ignores_case_and_works_for_events(self, database):
+        with db.connect() as conn:
+            output = run_tool(
+                conn, "get_event_counts", {**TUESDAY, "group_by": "machine", "ref_no": "fba3363"}
+            )
+        assert output["rows"][0]["ref_no"] == "FBA33639374813"
+
+    def test_several_matches_are_never_guessed(self, database):
+        with db.connect() as conn:
+            output = run_tool(
+                conn, "get_run_hours", {**TUESDAY, "group_by": "machine", "ref_no": "R8"}
+            )
+        assert output["error"] == "ambiguous_machine"
+        assert set(output["matches"]) == {"R80275", "R88897"}
+        assert "rows" not in output
+
+    def test_no_match_is_reported(self, database):
+        with db.connect() as conn:
+            output = run_tool(
+                conn, "get_run_hours", {**TUESDAY, "group_by": "machine", "ref_no": "ZZZ"}
+            )
+        assert output["error"] == "unknown_machine"
+
+    def test_percent_sign_is_not_a_wildcard(self, database):
+        with db.connect() as conn:
+            output = run_tool(
+                conn, "get_run_hours", {**TUESDAY, "group_by": "machine", "ref_no": "%"}
+            )
+        assert output["error"] == "unknown_machine"
+
     def test_range_outside_data_says_so(self, database):
         with db.connect() as conn:
             output = run_tool(

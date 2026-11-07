@@ -75,6 +75,8 @@ answer. The data doesn't record: {"; ".join(NOT_RECORDED)}.
 - Write every figure in digits, such as "5 impacts", never as a word.
 - State the dates you used, such as "Tue 8 Sep" or "7 to 13 Sep". Give hours to 2 decimals as \
 returned.
+- A machine can be given by part of its reference. If a tool returns ambiguous_machine, list the
+matches and ask which one is meant. Never pick one yourself.
 - If rows tie for first place, name all of them.
 - When ranking drivers on events, mention events_with_no_driver_logged_on if it's above zero, \
 because those events can't be attributed to anyone.

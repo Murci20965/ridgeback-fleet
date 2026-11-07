@@ -46,6 +46,7 @@ sequenceDiagram
 | --- | --- |
 | Made-up figures | A guard compares each figure with tool results. It allows one retry, then withholds the answer |
 | Unanswerable questions | The prompt lists what the data doesn't record, and tools report dates outside the data |
+| Wrong machine | A partial reference such as `4813` is accepted only if it matches one machine. With several matches, the chat asks which one is meant |
 | Wrong dates | The server gives the model the calendar for the latest week, and the answer states the dates used |
 | SQL injection | The model picks from typed tools and never writes SQL. All values are bound parameters |
 | Prompt injection | The database connection is read-only, so a manipulated model has nothing to damage. The prompt also treats data as data |

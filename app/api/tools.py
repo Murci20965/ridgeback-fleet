@@ -24,6 +24,7 @@ EventType = Literal[
     "Excess Idle",
 ]
 MAX_ROWS = 50
+MAX_MATCHES = 10
 
 NOT_RECORDED = [
     "battery or charge level",
@@ -45,7 +46,7 @@ class RunHoursArgs(BaseModel):
     group_by: Literal["machine", "branch", "machine_type", "day"]
     machine_type: MachineType | None = None
     branch: Branch | None = None
-    ref_no: str | None = Field(None, description="An exact machine reference number.")
+    ref_no: str | None = Field(None, description="A full or partial machine reference number.")
     limit: int = Field(10, ge=1, le=MAX_ROWS)
 
 
@@ -59,7 +60,7 @@ class EventCountsArgs(BaseModel):
     driver: str | None = Field(None, description="A driver's full or partial name.")
     machine_type: MachineType | None = None
     branch: Branch | None = None
-    ref_no: str | None = Field(None, description="An exact machine reference number.")
+    ref_no: str | None = Field(None, description="A full or partial machine reference number.")
     limit: int = Field(10, ge=1, le=MAX_ROWS)
 
 
@@ -90,10 +91,39 @@ def _outside_data(coverage: dict[str, Any] | None, from_date: date, to_date: dat
     return None
 
 
+def _resolve_machine(
+    conn: psycopg.Connection, ref_no: str | None
+) -> tuple[str | None, dict[str, Any] | None]:
+    """Turn a partial reference into one machine, or an error for the model to relay.
+
+    Several matches are never guessed between, because that could show the wrong machine.
+    """
+    if ref_no is None:
+        return None, None
+    matches = queries.find_machines(conn, ref_no)
+    if len(matches) == 1:
+        return matches[0], None
+    if not matches:
+        return None, {
+            "error": "unknown_machine",
+            "message": f"No machine on the list matches {ref_no}.",
+        }
+    return None, {
+        "error": "ambiguous_machine",
+        "message": f"{len(matches)} machines match {ref_no}. Ask which one is meant.",
+        "matches": matches[:MAX_MATCHES],
+        "total_matches": len(matches),
+    }
+
+
 def _run_hours(conn: psycopg.Connection, args: RunHoursArgs) -> dict[str, Any]:
     outside = _outside_data(queries.get_coverage(conn), args.from_date, args.to_date)
     if outside:
         return outside
+    ref_no, problem = _resolve_machine(conn, args.ref_no)
+    if problem:
+        return problem
+    args = args.model_copy(update={"ref_no": ref_no})
     rows = queries.get_run_hours(conn, **args.model_dump(exclude={"limit"}))
     return {"rows": rows[: args.limit], "total_groups": len(rows)}
 
@@ -102,6 +132,10 @@ def _event_counts(conn: psycopg.Connection, args: EventCountsArgs) -> dict[str, 
     outside = _outside_data(queries.get_coverage(conn), args.from_date, args.to_date)
     if outside:
         return outside
+    ref_no, problem = _resolve_machine(conn, args.ref_no)
+    if problem:
+        return problem
+    args = args.model_copy(update={"ref_no": ref_no})
     rows = queries.get_event_counts(conn, **args.model_dump(exclude={"limit"}))
     result: dict[str, Any] = {}
     if args.group_by == "driver":
