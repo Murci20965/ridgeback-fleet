@@ -84,7 +84,13 @@ class TestGuard:
 class TestTools:
     def test_definitions_are_well_formed(self, database):
         names = {t["function"]["name"] for t in tool_definitions()}
-        assert names == {"get_run_hours", "get_event_counts", "get_fleet", "get_data_coverage"}
+        assert names == {
+            "get_run_hours",
+            "get_event_counts",
+            "get_fleet",
+            "get_data_coverage",
+            "calculate",
+        }
 
     def test_top_forklift(self, database):
         with db.connect() as conn:
