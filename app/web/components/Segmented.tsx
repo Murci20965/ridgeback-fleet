@@ -64,8 +64,8 @@ export function Segmented({
       ref={containerRef}
       role="group"
       aria-label={ariaLabel}
-      className={`relative flex max-w-full gap-0.5 overflow-x-auto bg-surface-2 [scrollbar-width:none] ${
-        small ? "w-fit rounded-[9px] p-[3px]" : "rounded-[12px] p-[5px]"
+      className={`relative flex max-w-full gap-0.5 overflow-x-auto [scrollbar-width:none] ${
+        small ? "w-fit rounded-[9px] bg-surface-2 p-[3px]" : "rounded-[12px] bg-filter p-[5px]"
       }`}
     >
       {pill && (

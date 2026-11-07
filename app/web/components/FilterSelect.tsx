@@ -27,7 +27,7 @@ export function FilterSelect({
     >
       <Select.Trigger
         aria-label={label}
-        className={`pressable flex h-[42px] cursor-pointer items-center gap-1.5 rounded-[12px] bg-surface-2 pr-2.5 pl-3.5 text-[13px] ${
+        className={`pressable flex h-[42px] cursor-pointer items-center gap-1.5 rounded-[12px] bg-filter pr-2.5 pl-3.5 text-[13px] ${
           value ? "font-medium text-ink" : "text-ink-2"
         } hover:text-ink`}
       >
