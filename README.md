@@ -4,7 +4,7 @@ A daily pipeline, dashboard and chat assistant for Ridgeback's forklifts, reach 
 
 | Item | Link |
 | --- | --- |
-| Live app | _Add after deployment_ |
+| Live app | https://ridgeback-fleet-jet.vercel.app/ |
 | Walkthrough video | _Add after recording_ |
 | Solution design diagram | [`docs/solution_design.png`](docs/solution_design.png), source [`docs/solution_design.drawio`](docs/solution_design.drawio) |
 
@@ -12,10 +12,10 @@ A daily pipeline, dashboard and chat assistant for Ridgeback's forklifts, reach 
 
 - [x] **Task 1.** Cleaning code in [`pipeline/clean.py`](pipeline/clean.py) and a [data model](docs/data_model.md)
 - [x] **Task 2.** Ingestion pipeline in [`pipeline/`](pipeline/README.md), scheduled by [GitHub Actions](.github/workflows/ingest.yml)
-- [ ] **Task 3.** Hosted dashboard and chat in [`app/`](app/README.md), and [`docs/chat_results.md`](docs/chat_results.md) with 5 test questions and the answers
+- [x] **Task 3.** Hosted dashboard and chat in [`app/`](app/README.md), and [`docs/chat_results.md`](docs/chat_results.md) with 5 test questions and the answers
 - [x] **Task 4.** Solution design diagram in `docs/`, as the source file and a PNG
-- [ ] No API keys in the repo or in front-end code
-- [ ] The sections below are filled in
+- [x] No API keys in the repo or in front-end code
+- [x] The sections below are filled in
 
 ## Repo layout
 
@@ -95,7 +95,7 @@ Tables, views and design decisions are in [`docs/data_model.md`](docs/data_model
 
 ## AI tools used
 
-_To be confirmed before submitting._ Claude Code was used to plan the work, profile the data, write code and tests, and draft documentation. Every figure was checked against an independent calculation.
+I used Claude Code (Claude Opus 5.5) to plan the work, profile the data, write the code and tests, build the diagram and draft the documentation. I made the product and design decisions, tested the app and reviewed the result. Figures were checked against a separate profile of the raw files.
 
 ## What I would do next
 

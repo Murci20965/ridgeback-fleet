@@ -87,8 +87,10 @@ To compare real models, which costs a few cents, run `app/api/evaluate.py`. Its 
 
 | Where | Setting |
 | --- | --- |
-| Vercel env vars | `OPENROUTER_API_KEY`, `DATABASE_URL` (Neon pooled string, read-only role), `APP_URL` |
+| Vercel env vars | `OPENROUTER_API_KEY`, `DATABASE_URL` (Neon pooled string, read-only role). `APP_URL` is optional and identifies the app to OpenRouter |
 | GitHub Actions secret | `DATABASE_URL` (Neon direct string, owner role) |
+
+Keep the API's dependencies in `requirements.txt`, with no `pyproject.toml` in `app/api/`. With tool settings in that file, the deployed API crashed on startup. Moving them to `pytest.ini` and `ruff.toml` fixed it, though Vercel's docs don't say which file takes priority.
 
 Create the read-only role with [`readonly_role.sql`](../pipeline/sql/roles/readonly_role.sql) after the first pipeline run.
 
