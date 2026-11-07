@@ -318,7 +318,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
             ask(input);
           }}
         >
-          <div className="flex items-end gap-2 rounded-xl border border-line-strong bg-page p-1.5 focus-within:border-accent">
+          <div className="flex items-end gap-2 rounded-xl border border-line bg-page p-1.5 transition-colors duration-150 focus-within:border-accent">
             <textarea
               ref={inputRef}
               rows={1}
@@ -333,12 +333,14 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
               }}
               placeholder="Which driver had the most impacts?"
               aria-label="Your question"
-              className="max-h-28 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-base outline-none placeholder:text-ink-2 lg:text-sm"
+              className="max-h-28 min-h-9 flex-1 resize-none bg-transparent px-2 py-1.5 text-base outline-none [field-sizing:content] placeholder:text-ink-2 lg:text-sm"
             />
             <button
               type="submit"
               aria-label="Send your question"
-              className="pressable grid size-9 shrink-0 place-items-center rounded-lg bg-accent text-on-accent"
+              className={`pressable grid size-9 shrink-0 place-items-center rounded-lg ${
+                input.trim() ? "bg-accent text-on-accent" : "bg-surface-2 text-ink-2"
+              }`}
             >
               <ArrowUp size={16} aria-hidden />
             </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, X } from "lucide-react";
 import { useFilters } from "@/components/FilterProvider";
 import { rangeLabel, shortWeekday, weekDays } from "@/lib/format";
 import { BRANCHES, MACHINE_TYPES, type Coverage } from "@/lib/types";
@@ -34,11 +35,46 @@ function Pill({
   );
 }
 
-const selectClass =
-  "min-h-9 rounded-lg border border-line bg-surface pl-2.5 pr-1 text-[13px] text-ink hover:border-line-strong";
+function FilterSelect({
+  label,
+  value,
+  allLabel,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string | null;
+  allLabel: string;
+  options: readonly string[];
+  onChange: (value: string | null) => void;
+}) {
+  return (
+    <div className="relative">
+      <select
+        aria-label={label}
+        value={value ?? ""}
+        onChange={(event) => onChange(event.target.value || null)}
+        className={`h-[46px] cursor-pointer appearance-none rounded-xl border bg-surface pr-8 pl-3 text-[13px] transition-colors duration-150 hover:border-line-strong ${
+          value ? "border-accent font-medium text-ink" : "border-line text-ink-2"
+        }`}
+      >
+        <option value="">{allLabel}</option>
+        {options.map((option) => (
+          <option key={option}>{option}</option>
+        ))}
+      </select>
+      <ChevronDown
+        size={14}
+        className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-ink-2"
+        aria-hidden
+      />
+    </div>
+  );
+}
 
 export function FilterBar({ coverage }: { coverage: Coverage }) {
-  const { filters, setFilter } = useFilters();
+  const { filters, setFilter, clearFilters } = useFilters();
+  const hasFilters = Boolean(filters.day || filters.branch || filters.type);
   const days = weekDays(coverage.week_start);
   const hasData = (day: string) => day >= coverage.first_date && day <= coverage.last_date;
 
@@ -63,29 +99,30 @@ export function FilterBar({ coverage }: { coverage: Coverage }) {
           </Pill>
         ))}
       </div>
-      <div className="flex gap-2">
-        <select
-          aria-label="Branch"
-          className={selectClass}
-          value={filters.branch ?? ""}
-          onChange={(event) => setFilter("branch", event.target.value || null)}
-        >
-          <option value="">All branches</option>
-          {BRANCHES.map((branch) => (
-            <option key={branch}>{branch}</option>
-          ))}
-        </select>
-        <select
-          aria-label="Machine type"
-          className={selectClass}
-          value={filters.type ?? ""}
-          onChange={(event) => setFilter("type", event.target.value || null)}
-        >
-          <option value="">All machines</option>
-          {MACHINE_TYPES.map((type) => (
-            <option key={type}>{type}</option>
-          ))}
-        </select>
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterSelect
+          label="Branch"
+          value={filters.branch}
+          allLabel="All branches"
+          options={BRANCHES}
+          onChange={(value) => setFilter("branch", value)}
+        />
+        <FilterSelect
+          label="Machine type"
+          value={filters.type}
+          allLabel="All machines"
+          options={MACHINE_TYPES}
+          onChange={(value) => setFilter("type", value)}
+        />
+        {hasFilters && (
+          <button
+            onClick={clearFilters}
+            className="pressable flex min-h-9 items-center gap-1 rounded-lg px-2 text-[13px] text-ink-2 hover:bg-surface-2 hover:text-ink"
+          >
+            <X size={14} aria-hidden />
+            Clear
+          </button>
+        )}
       </div>
     </section>
   );

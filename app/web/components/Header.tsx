@@ -44,13 +44,21 @@ export function Header({ pipeline }: { pipeline: PipelineStatus | null }) {
         aria-label="Main"
         className="mx-auto flex h-full w-full max-w-[1480px] items-center justify-between gap-3 px-4 lg:px-5"
       >
-        <div className="min-w-0">
-          <h1 className="truncate text-base leading-tight font-semibold tracking-tight">
-            Ridgeback fleet
-          </h1>
-          <p className="truncate text-xs text-ink-2">
-            <DataStatus pipeline={pipeline} />
-          </p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <svg viewBox="0 0 32 32" className="size-8 shrink-0" aria-hidden>
+            <rect width="32" height="32" rx="8" fill="var(--accent)" />
+            <rect x="8" y="17" width="4" height="8" rx="1" fill="#fff" />
+            <rect x="14" y="12" width="4" height="13" rx="1" fill="#fff" />
+            <rect x="20" y="7" width="4" height="18" rx="1" fill="#fff" />
+          </svg>
+          <div className="min-w-0">
+            <h1 className="truncate text-base leading-tight font-semibold tracking-tight">
+              Ridgeback fleet
+            </h1>
+            <p className="truncate text-xs text-ink-2">
+              <DataStatus pipeline={pipeline} />
+            </p>
+          </div>
         </div>
         <ThemeToggle />
       </nav>

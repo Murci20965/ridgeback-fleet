@@ -1,13 +1,14 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useTransition } from "react";
+import { createContext, useCallback, useContext, useOptimistic, useTransition } from "react";
 import type { Filters } from "@/lib/types";
 
 interface FilterContextValue {
   filters: Filters;
   isPending: boolean;
   setFilter: (key: keyof Filters, value: string | null) => void;
+  clearFilters: () => void;
 }
 
 const FilterContext = createContext<FilterContextValue | null>(null);
@@ -29,24 +30,35 @@ export function FilterProvider({
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
+  // Controls show the new choice at once, while the figures for it load.
+  const [optimistic, setOptimistic] = useOptimistic(filters);
 
-  const setFilter = useCallback(
-    (key: keyof Filters, value: string | null) => {
-      const next = new URLSearchParams();
-      const merged = { ...filters, [key]: value };
-      for (const [name, current] of Object.entries(merged)) {
-        if (current) next.set(name, current);
+  const navigate = useCallback(
+    (next: Filters) => {
+      const params = new URLSearchParams();
+      for (const [name, current] of Object.entries(next)) {
+        if (current) params.set(name, current);
       }
-      const query = next.toString();
+      const query = params.toString();
       startTransition(() => {
+        setOptimistic(next);
         router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
       });
     },
-    [filters, pathname, router],
+    [pathname, router, setOptimistic],
+  );
+
+  const setFilter = useCallback(
+    (key: keyof Filters, value: string | null) => navigate({ ...optimistic, [key]: value }),
+    [navigate, optimistic],
+  );
+  const clearFilters = useCallback(
+    () => navigate({ day: null, branch: null, type: null }),
+    [navigate],
   );
 
   return (
-    <FilterContext.Provider value={{ filters, isPending, setFilter }}>
+    <FilterContext.Provider value={{ filters: optimistic, isPending, setFilter, clearFilters }}>
       {children}
     </FilterContext.Provider>
   );

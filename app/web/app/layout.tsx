@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ScrollbarReveal } from "@/components/ScrollbarReveal";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        <ScrollbarReveal />
+        {children}
+      </body>
     </html>
   );
 }

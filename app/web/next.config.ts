@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   // Tailwind's Turbopack loader. Without it, the CSS has no utility classes.
   turbopack: {
     rules: {

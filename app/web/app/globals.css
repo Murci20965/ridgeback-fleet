@@ -104,6 +104,15 @@ body {
   outline-offset: 2px;
 }
 
+/* Scrollbars stay out of the way and appear, thin, only while something scrolls. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+[data-scrolling="true"] {
+  scrollbar-color: var(--line-strong) transparent;
+}
+
 /* Pressable things answer the press straight away. */
 .pressable {
   transition:
@@ -147,6 +156,10 @@ body {
   }
   .app-layout:has(.chat-panel[data-docked="false"]) {
     grid-template-columns: minmax(0, 1fr);
+  }
+  /* Leaves room so the reopen button never covers the last row. */
+  .app-layout:has(.chat-panel[data-docked="false"]) main {
+    padding-bottom: 5rem;
   }
 }
 
