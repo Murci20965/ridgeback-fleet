@@ -1,0 +1,35 @@
+name: Daily ingest
+
+on:
+  schedule:
+    # 02:00 UTC is 04:00 SAST. GitHub can start scheduled runs late under load.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Reprocess files already loaded (the data ends up identical)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# A second run queues rather than overlapping. The pipeline's advisory lock is the backstop.
+concurrency:
+  group: ingest
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+      - run: pip install -r pipeline/requirements.txt
+      - name: Load new files
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+        run: python pipeline/run.py $FORCE_FLAG
