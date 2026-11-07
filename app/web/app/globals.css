@@ -26,6 +26,8 @@
   --series-2: #256abf;
   --series-3: #5598e7;
   --series-4: #86b6ef;
+  --chart: var(--series-3);
+  --chart-peak: var(--series-1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -51,6 +53,8 @@
     --series-2: #2a78d6;
     --series-3: #5598e7;
     --series-4: #9ec5f4;
+  --chart: var(--series-2);
+  --chart-peak: var(--series-4);
   }
 }
 
@@ -76,6 +80,8 @@
   --series-2: #2a78d6;
   --series-3: #5598e7;
   --series-4: #9ec5f4;
+  --chart: var(--series-2);
+  --chart-peak: var(--series-4);
 }
 
 @theme inline {
@@ -94,6 +100,8 @@
   --color-on-accent: var(--on-accent);
   --color-critical: var(--critical);
   --color-good: var(--good);
+  --color-chart: var(--chart);
+  --color-chart-peak: var(--chart-peak);
 }
 
 body {
@@ -299,6 +307,58 @@ textarea:focus-visible,
   }
   .pressable:active {
     transform: none;
+  }
+}
+
+/* Saving the report as a PDF always gives a light, flat A4 document, whichever theme is on. */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  :root,
+  :root[data-theme="dark"],
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --page: #f0f0f3;
+    --surface: #ffffff;
+    --ink: #1d1d1f;
+    --ink-2: #5f5f64;
+    --line: #e8e8ed;
+    --line-strong: #c9c9cf;
+    --critical: #d70015;
+    --muted: #86868b;
+    --chart: #5598e7;
+    --chart-peak: #104281;
+  }
+  body {
+    background: #ffffff;
+    font-size: 12px;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .report-main {
+    max-width: none;
+    padding: 0;
+  }
+  .report {
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .kpi-tile,
+  .chart-mark {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  /* The screen's two columns need a wide window, and print should keep them on A4 too. */
+  .report-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .report-section,
+  .report-section tr {
+    break-inside: avoid;
   }
 }
 

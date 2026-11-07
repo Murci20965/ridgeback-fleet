@@ -1,10 +1,18 @@
-import type { Dashboard, Filters } from "./types";
+import type { Dashboard, Filters, WeeklyReport } from "./types";
 
 // BACKEND_INTERNAL_URL is set by the Vercel Services binding. API_URL is for local development.
 const baseUrl = () =>
   process.env.BACKEND_INTERNAL_URL ?? process.env.API_URL ?? "http://localhost:8000";
 
 export class DayOutsideData extends Error {}
+
+/** The newest weekly report, or null if none has been published yet. */
+export async function fetchLatestReport(): Promise<WeeklyReport | null> {
+  const response = await fetch(new URL("/api/v1/reports/latest", baseUrl()), { cache: "no-store" });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Report request failed with ${response.status}`);
+  return response.json();
+}
 
 export async function fetchDashboard(filters: Filters): Promise<Dashboard> {
   const url = new URL("/api/v1/dashboard", baseUrl());

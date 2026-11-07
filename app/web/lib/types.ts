@@ -97,6 +97,37 @@ export interface Dashboard {
   pipeline: PipelineStatus | null;
 }
 
+export interface Commentary {
+  summary: string;
+  highlights: string[];
+  checks: string[];
+}
+
+export interface ReportFacts {
+  week_start: string;
+  week_end: string;
+  days_with_data: number;
+  headline: string;
+  kpis: Kpis;
+  branches: BranchRow[];
+  daily: DailySummary[];
+  top_machines: MachineRow[];
+  least_used_machines: MachineRow[];
+  inactive_machines: MachineRow[];
+  top_drivers: DriverRow[];
+  attention: AttentionItem[];
+  pipeline: PipelineStatus | null;
+}
+
+export interface WeeklyReport {
+  week_start: string;
+  week_end: string;
+  generated_at: string;
+  facts: ReportFacts;
+  commentary: Commentary | null;
+  model: string | null;
+}
+
 export interface Filters {
   day: string | null;
   branch: Branch | null;

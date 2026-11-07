@@ -42,7 +42,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
     <FilterProvider filters={filters}>
         <ChatBridge>
         <div className="flex min-h-dvh flex-col lg:h-dvh">
-          <Header pipeline={data.pipeline} />
+          <Header pipeline={data.pipeline} current="dashboard" />
           <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-5 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-6 lg:px-6 lg:pt-4 lg:pb-6">
             <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
               {data.coverage && data.kpis ? (
