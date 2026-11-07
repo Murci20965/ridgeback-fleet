@@ -1,89 +1,63 @@
+import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AttentionList } from "@/components/AttentionList";
-import { BranchActivity } from "@/components/BranchActivity";
-import { Chat } from "@/components/Chat";
-import { ChatBridge } from "@/components/ChatBridge";
-import { DriverTable } from "@/components/DriverTable";
-import { FilterBar } from "@/components/FilterBar";
-import { FilterProvider, PendingFrame } from "@/components/FilterProvider";
-import { Header } from "@/components/Header";
-import { Headline } from "@/components/Headline";
-import { KpiRow } from "@/components/KpiRow";
-import { MachineHours } from "@/components/MachineHours";
-import { PipelineFooter } from "@/components/PipelineFooter";
-import { DayOutsideData, fetchDashboard } from "@/lib/api";
-import { BRANCHES, MACHINE_TYPES, type Branch, type Filters, type MachineType } from "@/lib/types";
+import heroPhoto from "@/public/ridgeback-hero.jpg";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-function readFilters(params: SearchParams): Filters {
-  const day = typeof params.day === "string" && /^\d{4}-\d{2}-\d{2}$/.test(params.day);
-  return {
-    day: day ? (params.day as string) : null,
-    branch: BRANCHES.includes(params.branch as Branch) ? (params.branch as Branch) : null,
-    type: MACHINE_TYPES.includes(params.type as MachineType) ? (params.type as MachineType) : null,
-  };
-}
-
-async function load(filters: Filters) {
-  try {
-    return await fetchDashboard(filters);
-  } catch (error) {
-    if (error instanceof DayOutsideData) redirect("/");
-    throw error;
+/** The way in. It isn't a sign-in: the brief needs a public URL, and the data is fictional. */
+export default async function WelcomePage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  // Filtered links used to live on this address, so they carry on to the dashboard.
+  const { day, branch, type } = await searchParams;
+  if (day || branch || type) {
+    const query = new URLSearchParams();
+    for (const [name, value] of Object.entries({ day, branch, type })) {
+      if (typeof value === "string") query.set(name, value);
+    }
+    redirect(`/dashboard?${query}`);
   }
-}
 
-export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const filters = readFilters(await searchParams);
-  const data = await load(filters);
-
+  // The photo sets the mood in both themes, so this page keeps light text over it.
   return (
-    <FilterProvider filters={filters}>
-        <ChatBridge>
-        <div className="flex min-h-dvh flex-col lg:h-dvh">
-          <Header pipeline={data.pipeline} />
-          <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-5 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-6 lg:px-6 lg:pt-4 lg:pb-6">
-            <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
-              {data.coverage && data.kpis ? (
-                <>
-                  <PendingFrame>
-                    <Headline
-                      filters={filters}
-                      from={data.from_date!}
-                      to={data.to_date!}
-                      text={data.headline ?? ""}
-                    />
-                  </PendingFrame>
-                  <FilterBar coverage={data.coverage} />
-                  <PendingFrame>
-                    <KpiRow kpis={data.kpis} />
-                    <div className="rise mt-5 grid gap-5 xl:grid-cols-2">
-                      <AttentionList items={data.attention} />
-                      <DriverTable drivers={data.drivers} />
-                      <MachineHours machines={data.machines} isDay={Boolean(filters.day)} />
-                      <BranchActivity
-                        coverage={data.coverage}
-                        daily={data.daily_branch_hours}
-                        branches={data.branches}
-                      />
-                    </div>
-                    <PipelineFooter pipeline={data.pipeline} />
-                  </PendingFrame>
-                </>
-              ) : (
-                <div className="mt-6 rounded-xl border border-line bg-surface p-8 text-center">
-                  <h2 className="font-medium">No fleet data yet</h2>
-                  <p className="mt-1 text-sm text-ink-2">
-                    Figures appear here after the pipeline loads its first file.
-                  </p>
-                </div>
-              )}
-            </main>
-            <Chat coverage={data.coverage} />
+    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-black p-4">
+      {/* The slight blur softens brand names on the machines in the photo. */}
+      <Image
+        src={heroPhoto}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="scale-105 object-cover blur-[3px]"
+      />
+      <div aria-hidden className="absolute inset-0 bg-linear-to-b from-black/30 via-black/40 to-black/80" />
+
+      <section className="soft-in relative flex w-full max-w-sm flex-col gap-4 rounded-[22px] border border-white/10 bg-black/60 p-8 text-white backdrop-blur-xl">
+        <div className="flex items-baseline gap-2.5">
+          <svg viewBox="8 7 16 18" className="h-[19px] w-auto shrink-0" fill="#ffffff" aria-hidden>
+            <rect x="8" y="17" width="4" height="8" rx="1" />
+            <rect x="14" y="12" width="4" height="13" rx="1" />
+            <rect x="20" y="7" width="4" height="18" rx="1" />
+          </svg>
+          <h1 className="text-2xl leading-tight font-semibold tracking-[-0.02em]">Ridgeback fleet</h1>
         </div>
-      </div>
-      </ChatBridge>
-    </FilterProvider>
+        <p className="text-sm leading-normal text-white/70">
+          How your machines and drivers performed, ready every morning. Ask anything the data can
+          answer.
+        </p>
+        <Link
+          href="/dashboard"
+          className="pressable block rounded-xl bg-white px-4 py-3 text-center text-[15px] font-medium text-[#121315]"
+        >
+          View dashboard
+        </Link>
+        <p className="text-center text-xs text-white/60">Demo with fictional data</p>
+      </section>
+
+      <p className="absolute bottom-4 left-4 text-xs text-white/60">Photo: Duc LE on Unsplash</p>
+    </main>
   );
 }
