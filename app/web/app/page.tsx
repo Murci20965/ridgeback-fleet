@@ -55,7 +55,7 @@ export default async function WelcomePage({
         </p>
         <Link
           href="/dashboard"
-          className="pressable block rounded-xl bg-white px-4 py-3 text-center text-[15px] font-medium text-[#121315]"
+          className="pressable block rounded-xl bg-[#17191f] px-4 py-3 text-center text-[15px] font-medium text-[#3b8fd6] hover:bg-[#1f2229]"
         >
           View dashboard
         </Link>
