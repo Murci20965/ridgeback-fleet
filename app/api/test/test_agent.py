@@ -265,3 +265,17 @@ class TestRoute:
         client = TestClient(main.app)
         assert client.post("/api/v1/chat", json={"question": "Hi"}).status_code == 200
         assert client.post("/api/v1/chat", json={"question": "Hi"}).status_code == 429
+
+
+class TestGuardOnReferences:
+    def test_an_invented_machine_gets_a_retry(self, database):
+        llm = ScriptedLLM(text("FBA99999999999 ran the most."), text("I can't tell from that."))
+        final = ask(llm)[-1]
+        assert final["text"] == "I can't tell from that."
+        assert final["repaired"] is True
+        assert "FBA99999999999" in llm.calls[1][-1]["content"]
+
+    def test_a_machine_named_in_the_question_is_allowed(self, database):
+        final = ask(ScriptedLLM(text("P99999 isn't on the list.")), "How is P99999 doing?")[-1]
+        assert final["verified"] is True
+        assert final["repaired"] is False
