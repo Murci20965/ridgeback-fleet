@@ -33,7 +33,7 @@ export default async function WelcomePage({
         priority
         unoptimized
         sizes="100vw"
-        className="scale-105 object-cover blur-[3px]"
+        className="scale-105 object-cover object-[22%_center] blur-[3px] md:object-center"
       />
       <div aria-hidden className="absolute inset-0 bg-linear-to-b from-black/30 via-black/40 to-black/80" />
 
