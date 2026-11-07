@@ -31,7 +31,8 @@ LABEL_SIZE = 16
 LINE_HEIGHT = 25
 BODY_INSET = 20
 
-# Fill, stroke, title colour, body colour. One blue marks the LLM, and red marks what goes wrong.
+# Fill, stroke, title colour, body colour. Among the cards, blue marks the LLM and red marks what
+# goes wrong.
 STYLES = {
     "plain": ("#ffffff", CARD_STROKE, INK, INK_2),
     "store": ("#dcdce2", CARD_STROKE, INK, INK),
@@ -40,12 +41,14 @@ STYLES = {
     "secret": (INK, INK, INK, "#ffffff"),
 }
 
-# title, x, y, width, height
+LANE_BLUE = "#0071e3"
+
+# title, x, y, width, height, border colour
 LANES = [
-    ("Ingest: runs unattended every morning", 20, 98, 1880, 172),
-    ("Store", 20, 318, 1880, 142),
-    ("Serve: dashboard and chat", 20, 508, 1880, 344),
-    ("When files are late, missing or corrupt", 20, 900, 1880, 168),
+    ("Ingest: runs unattended every morning", 20, 98, 1880, 172, LANE_BLUE),
+    ("Store", 20, 318, 1880, 142, LANE_BLUE),
+    ("Serve: dashboard and chat", 20, 508, 1880, 344, LANE_BLUE),
+    ("When files are late, missing or corrupt", 20, 900, 1880, 168, None),
 ]
 
 # id, style, x, y, width, height, title, lines
@@ -143,8 +146,11 @@ def build_svg() -> str:
         f'<text x="20" y="44" font-size="{PAGE_TITLE_SIZE}" font-weight="600" fill="{INK}">'
         f"{escape(TITLE)}</text>",
     ]
-    for title, x, y, w, h in LANES:
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" fill="{LANE_FILL}"/>')
+    for title, x, y, w, h, border in LANES:
+        outline = f' stroke="{border}" stroke-width="{STROKE_WIDTH}"' if border else ""
+        parts.append(
+            f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" fill="{LANE_FILL}"{outline}/>'
+        )
         parts.append(
             f'<text x="{x}" y="{y - 10}" font-size="{LANE_TITLE_SIZE}" font-weight="600" '
             f'fill="{INK}">{escape(title)}</text>'
@@ -197,8 +203,9 @@ def _title_style(size: int, colour: str) -> str:
 def build_drawio() -> str:
     cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>']
     cells.append(_text_cell("title", TITLE, 20, 12, 1200, 42, _title_style(PAGE_TITLE_SIZE, INK)))
-    for index, (title, x, y, w, h) in enumerate(LANES):
-        style = f"rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor={LANE_FILL};strokeColor=none;"
+    for index, (title, x, y, w, h, border) in enumerate(LANES):
+        outline = f"strokeColor={border};strokeWidth={STROKE_WIDTH};" if border else "strokeColor=none;"
+        style = f"rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor={LANE_FILL};{outline}"
         cells.append(
             f'<mxCell id="lane{index}" value="" style="{style}" vertex="1" parent="1">'
             f'<mxGeometry x="{x}" y="{y}" width="{w}" height="{h}" as="geometry"/></mxCell>'

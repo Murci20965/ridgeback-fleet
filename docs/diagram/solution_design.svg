@@ -2,11 +2,11 @@
 <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto"><path d="M1 1L9 5L1 9z" fill="#48484a"/></marker></defs>
 <rect width="1920" height="1080" fill="#ffffff"/>
 <text x="20" y="44" font-size="32" font-weight="600" fill="#1d1d1f">Ridgeback fleet data: production solution design</text>
-<rect x="20" y="98" width="1880" height="172" rx="16" fill="#eeeef2"/>
+<rect x="20" y="98" width="1880" height="172" rx="16" fill="#eeeef2" stroke="#0071e3" stroke-width="2"/>
 <text x="20" y="88" font-size="25" font-weight="600" fill="#1d1d1f">Ingest: runs unattended every morning</text>
-<rect x="20" y="318" width="1880" height="142" rx="16" fill="#eeeef2"/>
+<rect x="20" y="318" width="1880" height="142" rx="16" fill="#eeeef2" stroke="#0071e3" stroke-width="2"/>
 <text x="20" y="308" font-size="25" font-weight="600" fill="#1d1d1f">Store</text>
-<rect x="20" y="508" width="1880" height="344" rx="16" fill="#eeeef2"/>
+<rect x="20" y="508" width="1880" height="344" rx="16" fill="#eeeef2" stroke="#0071e3" stroke-width="2"/>
 <text x="20" y="498" font-size="25" font-weight="600" fill="#1d1d1f">Serve: dashboard and chat</text>
 <rect x="20" y="900" width="1880" height="168" rx="16" fill="#eeeef2"/>
 <text x="20" y="890" font-size="25" font-weight="600" fill="#1d1d1f">When files are late, missing or corrupt</text>
