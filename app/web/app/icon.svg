@@ -1,6 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#1d1d1f"/>
-  <rect x="8" y="17" width="4" height="8" rx="1" fill="#fff"/>
-  <rect x="14" y="12" width="4" height="13" rx="1" fill="#fff"/>
-  <rect x="20" y="7" width="4" height="18" rx="1" fill="#fff"/>
+  <style>
+    .tile { fill: #1d1d1f; }
+    .bar { fill: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #f5f5f7; }
+      .bar { fill: #1d1d1f; }
+    }
+  </style>
+  <rect class="tile" width="32" height="32" rx="8"/>
+  <rect class="bar" x="8" y="17" width="4" height="8" rx="1"/>
+  <rect class="bar" x="14" y="12" width="4" height="13" rx="1"/>
+  <rect class="bar" x="20" y="7" width="4" height="18" rx="1"/>
 </svg>
