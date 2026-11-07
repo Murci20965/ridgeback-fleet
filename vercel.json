@@ -1,0 +1,18 @@
+{
+  "services": {
+    "frontend": {
+      "root": "app/web",
+      "bindings": [
+        { "type": "service", "service": "backend", "format": "url", "env": "BACKEND_INTERNAL_URL" }
+      ]
+    },
+    "backend": {
+      "root": "app/api",
+      "entrypoint": "main:app"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/v1/(.*)", "destination": { "service": "backend" } },
+    { "source": "/(.*)", "destination": { "service": "frontend" } }
+  ]
+}

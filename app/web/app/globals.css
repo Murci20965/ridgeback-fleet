@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/* Palette: validated categorical, status and chrome values. Dark values are selected for the
+   dark surface, not an automatic inversion. The media block covers the OS setting and the
+   data-theme block covers the toggle, which wins both ways. */
+:root {
+  color-scheme: light;
+  --page: #f6f6f3;
+  --surface: #fcfcfb;
+  --surface-2: #f0efec;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #6f6d68;
+  --line: #e1e0d9;
+  --line-strong: #c3c2b7;
+  --accent: #2a78d6;
+  --accent-ink: #1c5cab;
+  --accent-wash: #e6f0fc;
+  --on-accent: #ffffff;
+  --critical: #d03b3b;
+  --warning: #b97f00;
+  --good: #006300;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #262624;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #a3a29a;
+    --line: #2c2c2a;
+    --line-strong: #383835;
+    --accent: #3987e5;
+    --accent-ink: #86b6ef;
+    --accent-wash: #16273d;
+    --on-accent: #ffffff;
+    --critical: #e66767;
+    --warning: #fab219;
+    --good: #0ca30c;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --surface-2: #262624;
+  --ink: #f0efec;
+  --ink-2: #c3c2b7;
+  --muted: #a3a29a;
+  --line: #2c2c2a;
+  --line-strong: #383835;
+  --accent: #3987e5;
+  --accent-ink: #86b6ef;
+  --accent-wash: #16273d;
+  --on-accent: #ffffff;
+  --critical: #e66767;
+  --warning: #fab219;
+  --good: #0ca30c;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-wash: var(--accent-wash);
+  --color-on-accent: var(--on-accent);
+  --color-critical: var(--critical);
+  --color-warning: var(--warning);
+  --color-good: var(--good);
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Pressable things answer the press straight away. */
+.pressable {
+  transition:
+    transform 140ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
+}
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* The chat is one component: a docked panel on large screens, a bottom sheet on small ones.
+   Keeping one instance means a conversation survives resizing and filter changes. */
+@media (max-width: 1023px) {
+  .chat-panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    height: 85dvh;
+    z-index: 40;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(100%);
+    visibility: hidden;
+    transition:
+      transform 260ms cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s linear 260ms;
+  }
+  .chat-panel[data-open="true"] {
+    transform: translateY(0);
+    visibility: visible;
+    transition:
+      transform 300ms cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .chat-panel,
+  .chat-panel[data-open="true"] {
+    transition-duration: 0ms;
+    transition-delay: 0ms;
+  }
+  .pressable:active {
+    transform: none;
+  }
+}
+
+/* The toggle shows the theme it switches to. */
+:root[data-theme="dark"] .light-icon {
+  display: none;
+}
+:root[data-theme="dark"] .dark-icon {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .light-icon {
+    display: none;
+  }
+  :root:where(:not([data-theme="light"])) .dark-icon {
+    display: block;
+  }
+}

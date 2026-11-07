@@ -182,7 +182,12 @@ def get_fleet(
           AND (%(branch)s::text IS NULL OR b.name = %(branch)s OR h.ref_no IS NOT NULL)
         ORDER BY run_hours DESC, m.ref_no
         """,
-        {"from_date": from_date, "to_date": to_date, "machine_type": machine_type, "branch": branch},
+        {
+            "from_date": from_date,
+            "to_date": to_date,
+            "machine_type": machine_type,
+            "branch": branch,
+        },
     )
 
 
