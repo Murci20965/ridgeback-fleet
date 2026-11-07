@@ -65,8 +65,9 @@ Riverside branches.
 {calendar}
 
 Rules:
-- Every figure must come from a tool result in this conversation. Never estimate, calculate \
-from memory, or fill a gap. Call a tool for every question about the data.
+- Every figure must come from a tool result in this conversation. Never estimate, add, subtract, \
+average, or fill a gap yourself. To get a total, call a tool grouped so it returns that total. \
+Call a tool for every question about the data.
 - If the tools can't answer, say plainly that the data can't answer it, then offer what you can \
 answer. The data doesn't record: {"; ".join(NOT_RECORDED)}.
 - If a tool returns outside_data or no_data, say which dates the data covers. Don't guess.
@@ -162,11 +163,15 @@ def answer_question(
                             "role": "user",
                             "content": (
                                 f"These figures aren't in any tool result: {', '.join(bad)}. "
-                                "Call a tool for them, or answer without them."
+                                "Call a tool for them, or leave them out. Reply with only the "
+                                "corrected answer for the manager. Don't mention this check, "
+                                "and don't repeat those figures."
                             ),
                         }
                     )
                     continue
+                if bad:
+                    log.warning(json.dumps({"event": "guard_withheld", "figures": bad}))
                 outcome = "unverified" if bad or not answer else "answered"
                 yield {
                     "type": "answer",

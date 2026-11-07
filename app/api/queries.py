@@ -305,7 +305,11 @@ def get_exceptions(
     machine_type: str | None = None,
     branch: str | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
-    """The raw facts behind the 'needs attention' list and the chat's caveats."""
+    """The raw facts behind the 'needs attention' list and the chat's caveats.
+
+    A held row isn't on the machine list, so its type is unknown and it's left out of
+    machine type views. Its day comes from its file, and its branch from the raw row.
+    """
     filters = {
         "from_date": from_date,
         "to_date": to_date,
@@ -346,10 +350,13 @@ def get_exceptions(
             SELECT detail AS ref_no, COUNT(*)::int AS rows_held
             FROM rejected_rows
             WHERE reason = 'unknown_machine'
+              AND LEFT(source_file, 10)::date - 1 BETWEEN %(from_date)s AND %(to_date)s
+              AND (%(branch)s::text IS NULL OR raw ILIKE '%%' || %(branch)s || '%%')
+              AND %(machine_type)s::text IS NULL
             GROUP BY detail
             ORDER BY detail
             """,
-            {},
+            filters,
         ),
         "problem_files": _rows(
             conn,

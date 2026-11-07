@@ -2,6 +2,7 @@
 
 import { ArrowUp, ChevronDown, Database, MessageCircle, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useChatBridge } from "@/components/ChatBridge";
 import { shortDate } from "@/lib/format";
 import type { ChatEvent, Coverage, TraceStep } from "@/lib/types";
 
@@ -70,6 +71,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isDocked, setIsDocked] = useState(true);
   const launcherRef = useRef<HTMLButtonElement>(null);
+  const { pending, clearPending } = useChatBridge();
   const nextId = useRef(1);
   const abort = useRef<AbortController | null>(null);
   const scroller = useRef<HTMLDivElement>(null);
@@ -101,6 +103,17 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
       else launcherRef.current?.focus({ preventScroll: true });
     });
   }
+
+  // A question sent from elsewhere on the page, such as an Ask button.
+  useEffect(() => {
+    if (!pending) return;
+    clearPending();
+    setPanelOpen(true);
+    if (isBusy) setInput(pending);
+    else ask(pending);
+    // Only a new pending question should run this.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending]);
 
   function addMessage(message: Omit<Message, "id">) {
     const id = nextId.current++;

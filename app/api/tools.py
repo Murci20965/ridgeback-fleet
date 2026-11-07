@@ -11,7 +11,7 @@ import psycopg
 from pydantic import BaseModel, Field, ValidationError
 
 import queries
-from dashboard import _delivery_day
+from dashboard import file_day_label
 from schemas import Branch, MachineType
 
 EventType = Literal[
@@ -134,7 +134,7 @@ def _data_coverage(conn: psycopg.Connection, _: DataCoverageArgs) -> dict[str, A
         "known_problems": {
             **exceptions,
             "problem_files": [
-                {**f, "events_from": _delivery_day(f["file_name"])}
+                {**f, "events_date": file_day_label(f["file_name"])}
                 for f in exceptions["problem_files"]
             ],
         },

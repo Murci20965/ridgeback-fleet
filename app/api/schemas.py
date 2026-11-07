@@ -34,6 +34,7 @@ class AttentionItem(BaseModel):
     kind: str
     title: str
     detail: str
+    question: str
 
 
 class MachineRow(BaseModel):

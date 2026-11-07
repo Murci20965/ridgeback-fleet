@@ -87,3 +87,34 @@ def test_unknown_filter_is_rejected(database):
 def test_connection_is_read_only(database):
     with db.connect() as conn, pytest.raises(psycopg.errors.ReadOnlySqlTransaction):
         conn.execute("DELETE FROM ingest_runs")
+
+
+def kinds(**params):
+    return [item["kind"] for item in get(**params)["attention"]]
+
+
+def test_critical_items_come_first(database):
+    severities = [item["severity"] for item in get()["attention"]]
+    assert severities == sorted(severities, key=lambda severity: severity != "critical")
+    assert severities[0] == "critical"
+
+
+def test_every_attention_item_has_a_question(database):
+    assert all(item["question"].endswith("?") for item in get()["attention"])
+
+
+def test_cut_off_file_only_shows_for_its_own_day(database):
+    assert "file_partial" in kinds(day="2026-09-11")
+    assert "file_partial" not in kinds(day="2026-09-13")
+
+
+def test_unknown_machine_follows_day_branch_and_type(database):
+    assert "unknown_machine" in kinds(day="2026-09-13", branch="Airport")
+    assert "unknown_machine" not in kinds(branch="Riverside")
+    assert "unknown_machine" not in kinds(day="2026-09-07")
+    assert "unknown_machine" not in kinds(machine_type="PPT")
+
+
+def test_held_rows_are_counted_in_the_detail(database):
+    item = next(i for i in get()["attention"] if i["kind"] == "unknown_machine")
+    assert item["detail"].startswith("21 rows")

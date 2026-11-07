@@ -29,6 +29,7 @@ export interface AttentionItem {
   kind: string;
   title: string;
   detail: string;
+  question: string;
 }
 
 export interface MachineRow {

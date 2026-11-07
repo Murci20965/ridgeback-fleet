@@ -7,17 +7,50 @@ import type { MachineRow } from "@/lib/types";
 
 const COLLAPSED_ROWS = 8;
 
+function SortButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      aria-pressed={active}
+      className={`pressable min-h-8 rounded-md px-2.5 text-xs ${
+        active ? "bg-surface font-medium text-ink shadow-sm" : "text-ink-2 hover:text-ink"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDay: boolean }) {
   const [expanded, setExpanded] = useState(false);
-  const shown = expanded ? machines : machines.slice(0, COLLAPSED_ROWS);
+  const [leastFirst, setLeastFirst] = useState(false);
+  // The API sends the busiest first. Machines that didn't run lead the least used view.
+  const ordered = leastFirst ? [...machines].reverse() : machines;
+  const shown = expanded ? ordered : ordered.slice(0, COLLAPSED_ROWS);
   const highest = Math.max(...machines.map((machine) => machine.run_hours), 1);
 
   return (
-    <Panel title="Run hours by machine" subtitle="Highest first">
+    <Panel title="Run hours by machine">
       {machines.length === 0 ? (
         <p className="text-sm text-ink-2">No machines match these filters.</p>
       ) : (
         <>
+          <div className="mb-3 inline-flex gap-0.5 rounded-lg bg-surface-2 p-0.5" role="group" aria-label="Sort machines">
+            <SortButton active={!leastFirst} onClick={() => setLeastFirst(false)}>
+              Most used
+            </SortButton>
+            <SortButton active={leastFirst} onClick={() => setLeastFirst(true)}>
+              Least used
+            </SortButton>
+          </div>
           <ul className="grid gap-2">
             {shown.map((machine) => (
               <li key={machine.ref_no}>

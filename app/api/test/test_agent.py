@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 import db
 import main
 from agent import UNVERIFIED_ANSWER, answer_question, unsupported_numbers
+from dashboard import file_day_label
 from llm import LLMError
 from tools import run_tool, tool_definitions
 
@@ -146,6 +147,11 @@ class TestTools:
     def test_bad_arguments_come_back_as_errors(self, database, name, args):
         with db.connect() as conn:
             assert "error" in run_tool(conn, name, args)
+
+
+def test_file_with_a_bad_name_has_no_day():
+    assert file_day_label("notes.csv") is None
+    assert file_day_label("2026-09-12_DailyTelemetryData.csv") == "Fri 11 Sep"
 
 
 class TestLoop:

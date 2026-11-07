@@ -13,7 +13,7 @@ function Tile({ label, value, note }: { label: string; value: string; note: stri
 
 export function KpiRow({ kpis }: { kpis: Kpis }) {
   return (
-    <dl className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
       <Tile
         label="Run hours"
         value={formatHours(kpis.run_hours)}

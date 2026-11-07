@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { AttentionList } from "@/components/AttentionList";
 import { BranchActivity } from "@/components/BranchActivity";
 import { Chat } from "@/components/Chat";
+import { ChatBridge } from "@/components/ChatBridge";
 import { DriverTable } from "@/components/DriverTable";
 import { FilterBar } from "@/components/FilterBar";
 import { FilterProvider, PendingFrame } from "@/components/FilterProvider";
@@ -39,43 +40,45 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
 
   return (
     <FilterProvider filters={filters}>
-      <div className="flex min-h-dvh flex-col lg:h-dvh">
-        <Header pipeline={data.pipeline} />
-        <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-4 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-5 lg:p-5 lg:pt-3">
-          <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
-            {data.coverage && data.kpis ? (
-              <>
-                <FilterBar coverage={data.coverage} />
-                <PendingFrame>
-                  <h2 className="sr-only">
-                    Figures for {rangeLabel(data.from_date!, data.to_date!)}
-                  </h2>
-                  <KpiRow kpis={data.kpis} />
-                  <div className="mt-4 grid gap-4 xl:grid-cols-2">
-                    <AttentionList items={data.attention} />
-                    <DriverTable drivers={data.drivers} />
-                    <MachineHours machines={data.machines} isDay={Boolean(filters.day)} />
-                    <BranchActivity
-                      coverage={data.coverage}
-                      daily={data.daily_branch_hours}
-                      branches={data.branches}
-                    />
-                  </div>
-                  <PipelineFooter pipeline={data.pipeline} />
-                </PendingFrame>
-              </>
-            ) : (
-              <div className="mt-6 rounded-xl border border-line bg-surface p-8 text-center">
-                <h2 className="font-medium">No fleet data yet</h2>
-                <p className="mt-1 text-sm text-ink-2">
-                  Figures appear here after the pipeline loads its first file.
-                </p>
-              </div>
-            )}
-          </main>
-          <Chat coverage={data.coverage} />
+        <ChatBridge>
+        <div className="flex min-h-dvh flex-col lg:h-dvh">
+          <Header pipeline={data.pipeline} />
+          <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-4 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-5 lg:p-5 lg:pt-3">
+            <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
+              {data.coverage && data.kpis ? (
+                <>
+                  <FilterBar coverage={data.coverage} />
+                  <PendingFrame>
+                    <h2 className="mt-1 mb-2 text-sm font-semibold">
+                      {rangeLabel(data.from_date!, data.to_date!)}
+                    </h2>
+                    <KpiRow kpis={data.kpis} />
+                    <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                      <AttentionList items={data.attention} />
+                      <DriverTable drivers={data.drivers} />
+                      <MachineHours machines={data.machines} isDay={Boolean(filters.day)} />
+                      <BranchActivity
+                        coverage={data.coverage}
+                        daily={data.daily_branch_hours}
+                        branches={data.branches}
+                      />
+                    </div>
+                    <PipelineFooter pipeline={data.pipeline} />
+                  </PendingFrame>
+                </>
+              ) : (
+                <div className="mt-6 rounded-xl border border-line bg-surface p-8 text-center">
+                  <h2 className="font-medium">No fleet data yet</h2>
+                  <p className="mt-1 text-sm text-ink-2">
+                    Figures appear here after the pipeline loads its first file.
+                  </p>
+                </div>
+              )}
+            </main>
+            <Chat coverage={data.coverage} />
         </div>
       </div>
+      </ChatBridge>
     </FilterProvider>
   );
 }
