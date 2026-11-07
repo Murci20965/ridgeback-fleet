@@ -24,12 +24,14 @@ export default async function WelcomePage({
   // The photo sets the mood in both themes, so this page keeps light text over it.
   return (
     <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-black p-4">
-      {/* The slight blur softens brand names on the machines in the photo. */}
+      {/* The slight blur softens brand names on the machines in the photo. The photo is already
+          compressed, and Vercel's image optimiser returns 404 under a Services deployment. */}
       <Image
         src={heroPhoto}
         alt=""
         fill
         priority
+        unoptimized
         sizes="100vw"
         className="scale-105 object-cover blur-[3px]"
       />
