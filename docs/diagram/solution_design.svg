@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1120" viewBox="0 0 1500 1120" font-family="Segoe UI, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" fill="#52514e"/></marker></defs>
+<rect width="1500" height="1120" fill="#ffffff"/>
+<text x="30" y="42" font-size="24" font-weight="600" fill="#0b0b0b">Ridgeback fleet data: production solution design</text>
+<rect x="30" y="70" width="1440" height="215" rx="10" fill="#f6f6f3" stroke="#c3c2b7"/>
+<text x="46" y="96" font-size="15" font-weight="600" fill="#52514e">Ingest: runs unattended every morning</text>
+<rect x="30" y="300" width="1440" height="165" rx="10" fill="#f6f6f3" stroke="#c3c2b7"/>
+<text x="46" y="326" font-size="15" font-weight="600" fill="#52514e">Store</text>
+<rect x="30" y="480" width="1440" height="310" rx="10" fill="#f6f6f3" stroke="#c3c2b7"/>
+<text x="46" y="506" font-size="15" font-weight="600" fill="#52514e">Serve: dashboard and chat</text>
+<rect x="30" y="805" width="1440" height="285" rx="10" fill="#f6f6f3" stroke="#c3c2b7"/>
+<text x="46" y="831" font-size="15" font-weight="600" fill="#52514e">When files are late, missing or corrupt</text>
+<rect x="55" y="125" width="200" height="120" rx="8" fill="#f0efec" stroke="#6f6d68" stroke-width="1.5"/>
+<text x="155.0" y="171.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Telematics provider</text>
+<text x="155.0" y="193.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Sends yesterday&#x27;s events</text>
+<text x="155.0" y="211.0" text-anchor="middle" font-size="13" fill="#3d3d3a">as a CSV at 04:00</text>
+<rect x="305" y="125" width="200" height="120" rx="8" fill="#f0efec" stroke="#6f6d68" stroke-width="1.5"/>
+<text x="405.0" y="162.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">SFTP folder</text>
+<text x="405.0" y="184.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Client&#x27;s folder</text>
+<text x="405.0" y="202.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Stands in for data/incoming</text>
+<text x="405.0" y="220.0" text-anchor="middle" font-size="13" fill="#3d3d3a">in this build</text>
+<rect x="555" y="125" width="260" height="120" rx="8" fill="#e6f0fc" stroke="#2a78d6" stroke-width="1.5"/>
+<text x="685.0" y="162.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Scheduled runner</text>
+<text x="685.0" y="184.0" text-anchor="middle" font-size="13" fill="#3d3d3a">GitHub Actions cron, 04:00 SAST</text>
+<text x="685.0" y="202.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Retries hourly until 07:00</text>
+<text x="685.0" y="220.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Option: n8n Schedule trigger</text>
+<rect x="865" y="125" width="320" height="120" rx="8" fill="#e6f0fc" stroke="#2a78d6" stroke-width="1.5"/>
+<text x="1025.0" y="162.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Python pipeline</text>
+<text x="1025.0" y="184.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Cleans rows, oldest file first</text>
+<text x="1025.0" y="202.0" text-anchor="middle" font-size="13" fill="#3d3d3a">One transaction per file</text>
+<text x="1025.0" y="220.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Safe to rerun: unique event keys</text>
+<rect x="1235" y="125" width="210" height="120" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="1.5"/>
+<text x="1340.0" y="162.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Alerts</text>
+<text x="1340.0" y="184.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Email or Slack webhook</text>
+<text x="1340.0" y="202.0" text-anchor="middle" font-size="13" fill="#3d3d3a">On failed, partial or</text>
+<text x="1340.0" y="220.0" text-anchor="middle" font-size="13" fill="#3d3d3a">missing files</text>
+<rect x="55" y="345" width="330" height="95" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+<text x="220.0" y="378.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Object storage (production)</text>
+<text x="220.0" y="400.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Raw files kept as delivered</text>
+<text x="220.0" y="418.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Bad files moved to quarantine</text>
+<rect x="435" y="345" width="480" height="95" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+<text x="675.0" y="378.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Neon Postgres</text>
+<text x="675.0" y="400.5" text-anchor="middle" font-size="13" fill="#3d3d3a">telemetry_events, machines, drivers, branches</text>
+<text x="675.0" y="418.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Views: v_machine_daily_hours, v_driver_events, v_branch_daily</text>
+<rect x="965" y="345" width="480" height="95" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+<text x="1205.0" y="378.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Run log in Postgres</text>
+<text x="1205.0" y="400.5" text-anchor="middle" font-size="13" fill="#3d3d3a">ingest_runs: file, rows loaded and rejected, outcome</text>
+<text x="1205.0" y="418.5" text-anchor="middle" font-size="13" fill="#3d3d3a">rejected_rows: raw row and the reason</text>
+<rect x="55" y="560" width="190" height="115" rx="8" fill="#f0efec" stroke="#6f6d68" stroke-width="1.5"/>
+<text x="150.0" y="603.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Operations manager</text>
+<text x="150.0" y="625.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Browser on phone,</text>
+<text x="150.0" y="643.5" text-anchor="middle" font-size="13" fill="#3d3d3a">tablet or desktop</text>
+<rect x="300" y="530" width="240" height="85" rx="8" fill="#fdeee8" stroke="#c2501f" stroke-width="1.5"/>
+<text x="420.0" y="558.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Next.js on Vercel</text>
+<text x="420.0" y="580.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Dashboard and chat UI</text>
+<text x="420.0" y="598.5" text-anchor="middle" font-size="13" fill="#3d3d3a">No secrets, no database</text>
+<rect x="590" y="530" width="250" height="85" rx="8" fill="#fdeee8" stroke="#c2501f" stroke-width="1.5"/>
+<text x="715.0" y="558.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">FastAPI: /api/v1/dashboard</text>
+<text x="715.0" y="580.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Runs shared SQL queries</text>
+<text x="715.0" y="598.5" text-anchor="middle" font-size="13" fill="#3d3d3a">On each page view, cached 60s</text>
+<rect x="300" y="660" width="240" height="100" rx="8" fill="#fdeee8" stroke="#c2501f" stroke-width="1.5"/>
+<text x="420.0" y="687.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">FastAPI: /api/v1/chat</text>
+<text x="420.0" y="709.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Rate limit, length limit</text>
+<text x="420.0" y="727.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Tool loop, 5 rounds at most</text>
+<text x="420.0" y="745.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Runs when a question is sent</text>
+<rect x="590" y="660" width="250" height="100" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1.5"/>
+<text x="715.0" y="687.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Typed read-only tools</text>
+<text x="715.0" y="709.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Run hours, events, fleet, coverage</text>
+<text x="715.0" y="727.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Validated, parameterised SQL</text>
+<text x="715.0" y="745.0" text-anchor="middle" font-size="13" fill="#3d3d3a">No free-form SQL</text>
+<rect x="890" y="530" width="250" height="85" rx="8" fill="#fdeee8" stroke="#c2501f" stroke-width="1.5"/>
+<text x="1015.0" y="558.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Answer guard</text>
+<text x="1015.0" y="580.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Figure not in a tool result:</text>
+<text x="1015.0" y="598.5" text-anchor="middle" font-size="13" fill="#3d3d3a">one retry, then withheld</text>
+<rect x="890" y="660" width="250" height="100" rx="8" fill="#efedfb" stroke="#6250d6" stroke-width="1.5"/>
+<text x="1015.0" y="687.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">OpenRouter (LLM call)</text>
+<text x="1015.0" y="709.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Claude Haiku 5.5, then fallback</text>
+<text x="1015.0" y="727.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Called only from FastAPI</text>
+<text x="1015.0" y="745.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Spend cap on the key</text>
+<rect x="1190" y="530" width="255" height="230" rx="8" fill="#fff6dd" stroke="#b97f00" stroke-width="1.5"/>
+<text x="1317.5" y="577.0" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Where secrets live</text>
+<text x="1317.5" y="599.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Vercel env vars:</text>
+<text x="1317.5" y="617.0" text-anchor="middle" font-size="13" fill="#3d3d3a">OPENROUTER_API_KEY</text>
+<text x="1317.5" y="635.0" text-anchor="middle" font-size="13" fill="#3d3d3a">DATABASE_URL (read-only role)</text>
+<text x="1317.5" y="653.0" text-anchor="middle" font-size="13" fill="#3d3d3a"></text>
+<text x="1317.5" y="671.0" text-anchor="middle" font-size="13" fill="#3d3d3a">GitHub Actions secret:</text>
+<text x="1317.5" y="689.0" text-anchor="middle" font-size="13" fill="#3d3d3a">DATABASE_URL (owner role)</text>
+<text x="1317.5" y="707.0" text-anchor="middle" font-size="13" fill="#3d3d3a"></text>
+<text x="1317.5" y="725.0" text-anchor="middle" font-size="13" fill="#3d3d3a">Never in the repo or browser</text>
+<rect x="55" y="860" width="330" height="205" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="1.5"/>
+<text x="220.0" y="912.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Late data</text>
+<text x="220.0" y="934.5" text-anchor="middle" font-size="13" fill="#3d3d3a">A row keeps its event date, wherever</text>
+<text x="220.0" y="952.5" text-anchor="middle" font-size="13" fill="#3d3d3a">it arrives, up to 7 days old</text>
+<text x="220.0" y="970.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Resent rows hit the unique key,</text>
+<text x="220.0" y="988.5" text-anchor="middle" font-size="13" fill="#3d3d3a">so they load once</text>
+<text x="220.0" y="1006.5" text-anchor="middle" font-size="13" fill="#3d3d3a">A late file loads on the next retry</text>
+<text x="220.0" y="1024.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Older rows are rejected with a reason</text>
+<rect x="410" y="860" width="330" height="205" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="1.5"/>
+<text x="575.0" y="912.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Missing file</text>
+<text x="575.0" y="934.5" text-anchor="middle" font-size="13" fill="#3d3d3a">No file by 07:00: alert the on-call</text>
+<text x="575.0" y="952.5" text-anchor="middle" font-size="13" fill="#3d3d3a">contact</text>
+<text x="575.0" y="970.5" text-anchor="middle" font-size="13" fill="#3d3d3a">A gap between delivery dates is logged</text>
+<text x="575.0" y="988.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Dashboard shows the last loaded date</text>
+<text x="575.0" y="1006.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Chat states which dates it covers</text>
+<text x="575.0" y="1024.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Backfills load in date order</text>
+<rect x="765" y="860" width="330" height="205" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="1.5"/>
+<text x="930.0" y="912.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Corrupt file</text>
+<text x="930.0" y="934.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Empty, not UTF-8 or missing a column:</text>
+<text x="930.0" y="952.5" text-anchor="middle" font-size="13" fill="#3d3d3a">roll back only that file, log failed</text>
+<text x="930.0" y="970.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Later files still load</text>
+<text x="930.0" y="988.5" text-anchor="middle" font-size="13" fill="#3d3d3a">The run exits non-zero and alerts</text>
+<text x="930.0" y="1006.5" text-anchor="middle" font-size="13" fill="#3d3d3a">The file is quarantined, and a</text>
+<text x="930.0" y="1024.5" text-anchor="middle" font-size="13" fill="#3d3d3a">corrected copy reloads automatically</text>
+<rect x="1120" y="860" width="325" height="205" rx="8" fill="#fcebeb" stroke="#a32d2d" stroke-width="1.5"/>
+<text x="1282.5" y="912.5" text-anchor="middle" font-size="15" font-weight="600" fill="#0b0b0b">Bad rows in a good file</text>
+<text x="1282.5" y="934.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Stored in rejected_rows with a reason</text>
+<text x="1282.5" y="952.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Good rows still load</text>
+<text x="1282.5" y="970.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Truncated file: outcome is partial,</text>
+<text x="1282.5" y="988.5" text-anchor="middle" font-size="13" fill="#3d3d3a">flagged on the dashboard</text>
+<text x="1282.5" y="1006.5" text-anchor="middle" font-size="13" fill="#3d3d3a">Unknown machine: held until it&#x27;s on</text>
+<text x="1282.5" y="1024.5" text-anchor="middle" font-size="13" fill="#3d3d3a">the list, then reprocessed</text>
+<line x1="255" y1="185.0" x2="305" y2="185.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="505" y1="185.0" x2="555" y2="185.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="815" y1="185.0" x2="865" y2="185.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="1185" y1="185.0" x2="1235" y2="185.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="890.0" y1="245" x2="890.0" y2="345" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="1075.0" y1="245" x2="1075.0" y2="345" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="345.0" y1="245" x2="345.0" y2="345" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="245" y1="617.5" x2="300" y2="572.5" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="245" y1="617.5" x2="300" y2="710.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="540" y1="572.5" x2="590" y2="572.5" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="540" y1="710.0" x2="590" y2="710.0" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<line x1="1015.0" y1="660" x2="1015.0" y2="615" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M 715 530 L 715 442" fill="none" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M 840 715 L 865 715 L 865 495 L 800 495 L 800 442" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<path d="M 420 760 L 420 777 L 1015 777 L 1015 762" fill="none" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M 1015 530 L 1015 521 L 150 521 L 150 558" fill="none" stroke="#52514e" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="1130" y="293" text-anchor="middle" font-size="12" fill="#52514e">logs each run</text>
+<text x="780" y="293" text-anchor="middle" font-size="12" fill="#52514e">loads events</text>
+<text x="690" y="480" text-anchor="middle" font-size="12" fill="#52514e">SQL</text>
+<text x="855" y="470" text-anchor="middle" font-size="12" fill="#52514e">read-only SQL</text>
+<text x="272" y="545" text-anchor="middle" font-size="12" fill="#52514e">opens</text>
+<text x="262" y="712" text-anchor="middle" font-size="12" fill="#52514e">asks</text>
+<text x="565" y="562" text-anchor="middle" font-size="12" fill="#52514e">fetch</text>
+<text x="565" y="708" text-anchor="middle" font-size="12" fill="#52514e">tool</text>
+<text x="700" y="773" text-anchor="middle" font-size="12" fill="#52514e">asks model, sending the tool results</text>
+<text x="1078" y="640" text-anchor="middle" font-size="12" fill="#52514e">draft answer</text>
+<text x="520" y="516" text-anchor="middle" font-size="12" fill="#52514e">checked answer, or a clear &#x27;the data can&#x27;t answer&#x27;</text>
+</svg>
