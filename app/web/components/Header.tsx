@@ -44,9 +44,10 @@ export function Header({ pipeline }: { pipeline: PipelineStatus | null }) {
         aria-label="Main"
         className="mx-auto flex h-full w-full max-w-[1480px] items-center justify-between gap-3 px-4 lg:px-6"
       >
-        <div className="flex min-w-0 items-center gap-2.5">
-          {/* The same mark as the tab icon. Theme colours make it follow the toggle here. */}
-          <svg viewBox="6 5 20 22" className="size-5 shrink-0" fill="var(--ink)" aria-hidden>
+        <div className="flex min-w-0 items-baseline gap-2.5">
+          {/* The same mark as the tab icon, cropped to the bars so their feet sit on the text's
+              baseline. Theme colours make it follow the toggle here. */}
+          <svg viewBox="8 7 16 18" className="h-[15px] w-auto shrink-0" fill="var(--ink)" aria-hidden>
             <rect x="8" y="17" width="4" height="8" rx="1" />
             <rect x="14" y="12" width="4" height="13" rx="1" />
             <rect x="20" y="7" width="4" height="18" rx="1" />
