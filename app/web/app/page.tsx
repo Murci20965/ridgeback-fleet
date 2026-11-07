@@ -7,6 +7,7 @@ import { DriverTable } from "@/components/DriverTable";
 import { FilterBar } from "@/components/FilterBar";
 import { FilterProvider, PendingFrame } from "@/components/FilterProvider";
 import { Header } from "@/components/Header";
+import { Headline } from "@/components/Headline";
 import { KpiRow } from "@/components/KpiRow";
 import { MachineHours } from "@/components/MachineHours";
 import { PipelineFooter } from "@/components/PipelineFooter";
@@ -43,27 +44,25 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         <ChatBridge>
         <div className="flex min-h-dvh flex-col lg:h-dvh">
           <Header pipeline={data.pipeline} />
-          <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-4 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-5 lg:p-5 lg:pt-3">
+          <div className="app-layout mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-5 px-4 pb-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:grid-rows-[minmax(0,1fr)] lg:gap-6 lg:px-6 lg:pt-4 lg:pb-6">
             <main className="min-w-0 pb-20 lg:overflow-y-auto lg:pb-0 lg:pr-1">
               {data.coverage && data.kpis ? (
                 <>
+                  <PendingFrame>
+                    <Headline
+                      dates={rangeLabel(data.from_date!, data.to_date!)}
+                      text={data.headline ?? ""}
+                    />
+                  </PendingFrame>
                   <FilterBar coverage={data.coverage} />
                   <PendingFrame>
-                    <div className="mt-1 mb-4">
-                      <p className="text-[13px] text-ink-2">
-                        {rangeLabel(data.from_date!, data.to_date!)}
-                      </p>
-                      <h2 className="mt-0.5 max-w-4xl text-xl leading-snug font-semibold tracking-tight text-balance md:text-2xl">
-                        {data.headline}
-                      </h2>
-                    </div>
                     <KpiRow
                       kpis={data.kpis}
                       daily={data.daily}
                       weekStart={data.coverage.week_start}
                       selectedDay={filters.day}
                     />
-                    <div className="rise mt-4 grid gap-4 xl:grid-cols-2">
+                    <div className="rise mt-5 grid gap-5 xl:grid-cols-2">
                       <AttentionList items={data.attention} />
                       <DriverTable drivers={data.drivers} />
                       <MachineHours machines={data.machines} isDay={Boolean(filters.day)} />

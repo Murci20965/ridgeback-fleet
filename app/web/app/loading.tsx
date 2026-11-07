@@ -1,9 +1,9 @@
-const block = "animate-pulse rounded-xl bg-surface-2 motion-reduce:animate-none";
+const block = "animate-pulse rounded-[20px] bg-surface-2 motion-reduce:animate-none";
 
 export default function Loading() {
   return (
     <div className="flex min-h-dvh flex-col lg:h-dvh" role="status" aria-label="Loading fleet figures">
-      <div className="h-14 shrink-0 bg-nav" />
+      <div className="h-12 shrink-0 border-b border-line bg-surface" />
       <div className="mx-auto grid min-h-0 w-full max-w-[1480px] flex-1 gap-5 p-4 lg:grid-cols-[minmax(0,1fr)_380px] lg:p-5 lg:pt-3">
         <div className="grid content-start gap-4">
           <div className={`${block} h-10 w-full`} />

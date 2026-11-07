@@ -1,99 +1,81 @@
 @import "tailwindcss";
 
-/* Colour carries meaning: blue is activity, orange is safety, red is only for critical items.
-   Chart colours are validated against these surfaces. Dark values are selected for the dark
-   surface, not an automatic inversion. The media block covers the OS setting and the
-   data-theme block covers the toggle, which wins both ways. */
+/* Restraint: neutral surfaces and one accent. Blue means data or the current choice, and red
+   appears only on critical items. The chart uses steps of a single blue, validated against
+   these surfaces. The media block covers the OS setting and the data-theme block covers the
+   toggle, which wins both ways. */
 :root {
   color-scheme: light;
-  --page: #f4f6f9;
+  --page: #f5f5f7;
   --surface: #ffffff;
-  --surface-2: #eef1f5;
-  --ink: #101828;
-  --ink-2: #475467;
-  --muted: #667085;
-  --line: #e3e7ed;
-  --line-strong: #c7cdd6;
-  --accent: #2a78d6;
-  --accent-ink: #1c5cab;
-  --accent-wash: #e7f1fc;
+  --surface-2: #f0f0f3;
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --muted: #86868b;
+  --line: #e8e8ed;
+  --line-strong: #d2d2d7;
+  --accent: #0071e3;
+  --accent-ink: #0066cc;
+  --accent-wash: #eef5fd;
   --on-accent: #ffffff;
-  --critical: #d03b3b;
-  --critical-ink: #8f1f1f;
-  --critical-wash: #fdeeee;
-  --warning: #b97f00;
-  --good: #006300;
-  --activity: #2a78d6;
-  --activity-soft: #a9cdf4;
-  --safety: #d85a30;
-  --safety-soft: #f5c4b3;
-  --nav: #0f2238;
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
-  --series-4: #eda100;
+  --critical: #d70015;
+  --good: #1d1d1f;
+  --bar-soft: #d2d2d7;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 4px 16px rgba(0, 0, 0, 0.03);
+  --series-1: #104281;
+  --series-2: #256abf;
+  --series-3: #5598e7;
+  --series-4: #86b6ef;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:where(:not([data-theme="light"])) {
     color-scheme: dark;
-    --page: #0b1017;
-    --surface: #131a24;
-    --surface-2: #1e2733;
-    --ink: #eef1f5;
-    --ink-2: #b4bdca;
-    --muted: #8f9aab;
-    --line: #263140;
-    --line-strong: #3a4759;
-    --accent: #3987e5;
-    --accent-ink: #86b6ef;
-    --accent-wash: #16273d;
+    --page: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #2c2c2e;
+    --ink: #f5f5f7;
+    --ink-2: #a1a1a6;
+    --muted: #8e8e93;
+    --line: #38383a;
+    --line-strong: #48484a;
+    --accent: #0a84ff;
+    --accent-ink: #2997ff;
+    --accent-wash: #10263f;
     --on-accent: #ffffff;
-    --critical: #e66767;
-    --critical-ink: #f7c1c1;
-    --critical-wash: #3a1d20;
-    --warning: #fab219;
-    --good: #0ca30c;
-    --activity: #3987e5;
-    --activity-soft: #274a73;
-    --safety: #e0683a;
-    --safety-soft: #6b3a28;
-    --nav: #0e1621;
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --series-4: #c98500;
+    --critical: #ff6961;
+    --good: #f5f5f7;
+    --bar-soft: #48484a;
+    --card-shadow: none;
+    --series-1: #184f95;
+    --series-2: #2a78d6;
+    --series-3: #5598e7;
+    --series-4: #9ec5f4;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0b1017;
-  --surface: #131a24;
-  --surface-2: #1e2733;
-  --ink: #eef1f5;
-  --ink-2: #b4bdca;
-  --muted: #8f9aab;
-  --line: #263140;
-  --line-strong: #3a4759;
-  --accent: #3987e5;
-  --accent-ink: #86b6ef;
-  --accent-wash: #16273d;
+  --page: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --muted: #8e8e93;
+  --line: #38383a;
+  --line-strong: #48484a;
+  --accent: #0a84ff;
+  --accent-ink: #2997ff;
+  --accent-wash: #10263f;
   --on-accent: #ffffff;
-  --critical: #e66767;
-  --critical-ink: #f7c1c1;
-  --critical-wash: #3a1d20;
-  --warning: #fab219;
-  --good: #0ca30c;
-  --activity: #3987e5;
-  --activity-soft: #274a73;
-  --safety: #e0683a;
-  --safety-soft: #6b3a28;
-  --nav: #0e1621;
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
-  --series-4: #c98500;
+  --critical: #ff6961;
+  --good: #f5f5f7;
+  --bar-soft: #48484a;
+  --card-shadow: none;
+  --series-1: #184f95;
+  --series-2: #2a78d6;
+  --series-3: #5598e7;
+  --series-4: #9ec5f4;
 }
 
 @theme inline {
@@ -110,21 +92,15 @@
   --color-accent-wash: var(--accent-wash);
   --color-on-accent: var(--on-accent);
   --color-critical: var(--critical);
-  --color-critical-ink: var(--critical-ink);
-  --color-critical-wash: var(--critical-wash);
-  --color-activity: var(--activity);
-  --color-activity-soft: var(--activity-soft);
-  --color-safety: var(--safety);
-  --color-safety-soft: var(--safety-soft);
-  --color-nav: var(--nav);
-  --color-warning: var(--warning);
   --color-good: var(--good);
+  --color-bar-soft: var(--bar-soft);
 }
 
 body {
   background: var(--page);
   color: var(--ink);
-  font-family: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, var(--font-inter), "Segoe UI", sans-serif;
+  letter-spacing: -0.006em;
 }
 
 :focus-visible {
@@ -139,6 +115,13 @@ body {
 }
 [data-scrolling="true"] {
   scrollbar-color: var(--line-strong) transparent;
+}
+
+/* Cards sit on the page with a soft shadow instead of a drawn border. */
+.card {
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
 }
 
 /* Sections rise in once on first load. Filter changes keep them in place, so this can't

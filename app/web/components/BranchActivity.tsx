@@ -166,20 +166,20 @@ export function BranchActivity({
         <tbody className="divide-y divide-line border-t border-line tabular-nums">
           {rows.map((row) => (
             <tr key={row.branch}>
-              <th scope="row" className="py-2 text-left font-normal">
+              <th scope="row" className="py-2.5 text-left font-normal">
                 <span className="flex items-center gap-2">
                   <span
-                    className="size-2.5 rounded-sm"
+                    className="size-2.5 rounded-full"
                     style={{ background: BRANCH_COLOUR[row.branch] }}
                     aria-hidden
                   />
                   {row.branch}
                 </span>
               </th>
-              <td className="py-2 text-right font-medium">{formatHours(row.run_hours)}</td>
-              <td className="py-2 text-right">{row.active_machines}</td>
-              <td className="py-2 text-right">{formatCount(row.impacts)}</td>
-              <td className="py-2 text-right">{formatCount(row.harsh)}</td>
+              <td className="py-2.5 text-right font-medium">{formatHours(row.run_hours)}</td>
+              <td className="py-2.5 text-right">{row.active_machines}</td>
+              <td className="py-2.5 text-right">{formatCount(row.impacts)}</td>
+              <td className="py-2.5 text-right">{formatCount(row.harsh)}</td>
             </tr>
           ))}
         </tbody>

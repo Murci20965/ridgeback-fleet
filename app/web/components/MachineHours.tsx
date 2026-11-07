@@ -20,8 +20,8 @@ function SortButton({
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={`pressable min-h-8 rounded-md px-2.5 text-xs ${
-        active ? "bg-surface font-medium text-ink shadow-sm" : "text-ink-2 hover:text-ink"
+      className={`pressable min-h-7 rounded-[7px] px-3 text-xs ${
+        active ? "bg-surface font-medium text-ink shadow-[0_1px_3px_rgba(0,0,0,0.12)]" : "text-ink-2 hover:text-ink"
       }`}
     >
       {children}
@@ -43,7 +43,7 @@ export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDa
         <p className="text-sm text-ink-2">No machines match these filters.</p>
       ) : (
         <>
-          <div className="mb-3 inline-flex gap-0.5 rounded-lg bg-surface-2 p-0.5" role="group" aria-label="Sort machines">
+          <div className="mb-4 inline-flex gap-0.5 rounded-[9px] bg-surface-2 p-[3px]" role="group" aria-label="Sort machines">
             <SortButton active={!leastFirst} onClick={() => setLeastFirst(false)}>
               Most used
             </SortButton>
@@ -51,24 +51,23 @@ export function MachineHours({ machines, isDay }: { machines: MachineRow[]; isDa
               Least used
             </SortButton>
           </div>
-          <ul className="grid gap-3">
+          <ul className="grid gap-4">
             {shown.map((machine) => (
               <li key={machine.ref_no}>
                 <div className="flex items-baseline justify-between gap-3 text-[13px]">
                   <span className="min-w-0 truncate">
                     {machine.ref_no}
-                    <span className="ml-2 rounded bg-surface-2 px-1.5 py-0.5 text-[11px] text-ink-2">
-                      {machine.machine_type}
+                    <span className="ml-2 text-xs text-ink-2">
+                      {machine.machine_type} · {machine.assigned_branch}
                     </span>
-                    <span className="ml-1.5 text-xs text-ink-2">{machine.assigned_branch}</span>
                   </span>
                   <span className="shrink-0 font-medium tabular-nums">
                     {machine.active ? formatHours(machine.run_hours) : isDay ? "Idle" : "Didn’t run"}
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 rounded-full bg-surface-2" aria-hidden>
+                <div className="mt-2 h-1 rounded-full bg-surface-2" aria-hidden>
                   <div
-                    className="h-full rounded-full bg-activity transition-[width] duration-300 ease-out motion-reduce:transition-none"
+                    className="h-full rounded-full bg-accent transition-[width] duration-300 ease-out motion-reduce:transition-none"
                     style={{ width: `${(machine.run_hours / highest) * 100}%` }}
                   />
                 </div>

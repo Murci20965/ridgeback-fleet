@@ -197,7 +197,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
       <button
         ref={launcherRef}
         onClick={() => setPanelOpen(true)}
-        className={`pressable fixed right-4 bottom-4 z-30 flex min-h-12 items-center gap-2 rounded-full bg-accent px-4 text-sm font-medium text-on-accent shadow-lg ${
+        className={`pressable fixed right-5 bottom-5 z-30 flex min-h-11 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-surface shadow-[0_4px_20px_rgba(0,0,0,0.18)] ${
           isDocked ? "lg:hidden" : ""
         }`}
       >
@@ -219,14 +219,11 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
         onKeyDown={(event) => {
           if (event.key === "Escape") setPanelOpen(false);
         }}
-        className="chat-panel flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_1px_2px_rgba(16,24,40,0.05)]"
+        className="chat-panel card flex min-h-0 flex-col overflow-hidden"
       >
-        <header className="flex items-center justify-between gap-2 border-b border-line py-2.5 pr-2 pl-4">
+        <header className="flex items-center justify-between gap-2 py-3.5 pr-3 pl-5">
           <div className="min-w-0">
-            <h2 className="flex items-center gap-1.5 text-sm font-semibold">
-              <MessageCircle size={15} className="text-accent-ink" aria-hidden />
-              Ask about your fleet
-            </h2>
+            <h2 className="text-[17px] font-semibold tracking-tight">Ask about your fleet</h2>
             {coverage && (
               <p className="text-xs text-ink-2">
                 Data from {shortDate(coverage.first_date)} to {shortDate(coverage.last_date)}
@@ -253,7 +250,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
           </div>
         </header>
 
-        <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto p-4" aria-live="polite">
+        <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto px-5 pb-4" aria-live="polite">
           {messages.length === 0 ? (
             <div>
               <p className="text-sm text-ink-2">
@@ -265,7 +262,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                   <li key={suggestion}>
                     <button
                       onClick={() => ask(suggestion)}
-                      className="pressable flex w-full items-center justify-between gap-2 rounded-xl bg-surface-2 px-3 py-2.5 text-left text-[13px] hover:bg-accent-wash"
+                      className="pressable flex w-full items-center justify-between gap-2 rounded-[14px] bg-surface-2 px-3.5 py-3 text-left text-[13px]"
                     >
                       {suggestion}
                       <ArrowUpRight size={14} className="shrink-0 text-ink-2" aria-hidden />
@@ -280,7 +277,7 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
                 message.role === "user" ? (
                   <li
                     key={message.id}
-                    className="ml-8 justify-self-end rounded-2xl rounded-br-md bg-accent px-3 py-2 text-sm break-words text-on-accent"
+                    className="ml-8 justify-self-end rounded-[18px] rounded-br-[6px] bg-accent px-3 py-2 text-sm break-words text-on-accent"
                   >
                     {message.text}
                   </li>
@@ -316,13 +313,13 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
         </div>
 
         <form
-          className="border-t border-line p-2.5"
+          className="p-3"
           onSubmit={(event) => {
             event.preventDefault();
             ask(input);
           }}
         >
-          <div className="flex items-end gap-2 rounded-xl border border-line bg-page p-1.5 transition-colors duration-150 focus-within:border-accent">
+          <div className="flex items-end gap-2 rounded-[18px] bg-surface-2 p-1.5">
             <textarea
               ref={inputRef}
               rows={1}
@@ -342,8 +339,8 @@ export function Chat({ coverage }: { coverage: Coverage | null }) {
             <button
               type="submit"
               aria-label="Send your question"
-              className={`pressable grid size-9 shrink-0 place-items-center rounded-lg ${
-                input.trim() ? "bg-accent text-on-accent" : "bg-surface-2 text-ink-2"
+              className={`pressable grid size-8 shrink-0 place-items-center rounded-full ${
+                input.trim() ? "bg-accent text-on-accent" : "bg-line-strong text-surface"
               }`}
             >
               <ArrowUp size={16} aria-hidden />

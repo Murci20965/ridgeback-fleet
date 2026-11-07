@@ -5,17 +5,17 @@ import { Panel, ShowMore } from "@/components/Panel";
 import type { DriverRow } from "@/lib/types";
 
 const COLLAPSED_ROWS = 7;
-const cell = "py-2 pl-3 text-right tabular-nums";
+const cell = "py-2.5 pl-3 text-right tabular-nums";
 const heading = "pb-1.5 text-xs font-normal text-ink-2";
 
 function ImpactCell({ value, highest, muted }: { value: number; highest: number; muted?: boolean }) {
   return (
-    <td className="w-[45%] py-2 pl-2">
+    <td className="w-[45%] py-2.5 pl-2">
       <div className="flex items-center justify-end gap-2">
-        <div className="h-1.5 min-w-0 flex-1 rounded-full bg-surface-2" aria-hidden>
+        <div className="h-1 min-w-0 flex-1 rounded-full bg-surface-2" aria-hidden>
           <div
             className={`h-full rounded-full transition-[width] duration-300 ease-out motion-reduce:transition-none ${
-              muted ? "bg-line-strong" : "bg-safety"
+              muted ? "bg-line-strong" : "bg-accent"
             }`}
             style={{ width: `${highest > 0 ? (value / highest) * 100 : 0}%` }}
           />
@@ -51,7 +51,7 @@ export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
             <tbody className="divide-y divide-line border-t border-line">
               {shown.map((driver) => (
                 <tr key={driver.driver_name}>
-                  <th scope="row" className="py-2 pr-2 text-left font-normal">
+                  <th scope="row" className="py-2.5 pr-2 text-left font-normal">
                     {driver.driver_name}
                   </th>
                   <ImpactCell value={driver.impacts} highest={highest} />
@@ -61,7 +61,7 @@ export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
               ))}
               {unattributed && (
                 <tr className="text-ink-2">
-                  <th scope="row" className="py-2 pr-2 text-left font-normal">
+                  <th scope="row" className="py-2.5 pr-2 text-left font-normal">
                     No driver logged on
                   </th>
                   <ImpactCell value={unattributed.impacts} highest={highest} muted />

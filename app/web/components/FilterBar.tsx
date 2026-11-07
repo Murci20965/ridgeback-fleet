@@ -24,10 +24,10 @@ function Pill({
       disabled={disabled}
       aria-pressed={active}
       aria-label={label}
-      className={`pressable min-h-9 shrink-0 rounded-lg px-2.5 text-[13px] sm:px-3 ${
+      className={`pressable min-h-8 shrink-0 rounded-[9px] px-2.5 text-[13px] sm:px-3.5 ${
         active
-          ? "bg-accent font-medium text-on-accent"
-          : "text-ink-2 hover:bg-surface-2 disabled:text-muted disabled:opacity-50 disabled:hover:bg-transparent"
+          ? "bg-surface font-medium text-ink shadow-[0_1px_3px_rgba(0,0,0,0.12)]"
+          : "text-ink-2 hover:text-ink disabled:opacity-40 disabled:hover:text-ink-2"
       }`}
     >
       {children}
@@ -54,8 +54,8 @@ function FilterSelect({
         aria-label={label}
         value={value ?? ""}
         onChange={(event) => onChange(event.target.value || null)}
-        className={`h-[46px] cursor-pointer appearance-none rounded-xl border bg-surface pr-8 pl-3 text-[13px] transition-colors duration-150 hover:border-line-strong ${
-          value ? "border-accent font-medium text-ink" : "border-line text-ink-2"
+        className={`h-[42px] cursor-pointer appearance-none rounded-[12px] bg-surface-2 pr-8 pl-3.5 text-[13px] ${
+          value ? "font-medium text-ink" : "text-ink-2"
         }`}
       >
         <option value="">{allLabel}</option>
@@ -81,9 +81,9 @@ export function FilterBar({ coverage }: { coverage: Coverage }) {
   return (
     <section
       aria-label="Filters"
-      className="-mx-4 flex flex-wrap items-center gap-2 bg-page px-4 py-2 lg:sticky lg:top-0 lg:z-20 lg:mx-0 lg:px-0 lg:pt-0"
+      className="-mx-4 flex flex-wrap items-center gap-2 bg-page px-4 pt-1 pb-4 lg:sticky lg:top-0 lg:z-20 lg:mx-0 lg:px-0 lg:pt-3"
     >
-      <div className="flex max-w-full gap-0.5 overflow-x-auto rounded-xl border border-line bg-surface p-1 [scrollbar-width:none]">
+      <div className="flex max-w-full gap-0.5 overflow-x-auto rounded-[12px] bg-surface-2 p-[5px] [scrollbar-width:none]">
         <Pill active={!filters.day} onClick={() => setFilter("day", null)}>
           Week
         </Pill>
@@ -117,7 +117,7 @@ export function FilterBar({ coverage }: { coverage: Coverage }) {
         {hasFilters && (
           <button
             onClick={clearFilters}
-            className="pressable flex min-h-9 items-center gap-1 rounded-lg px-2 text-[13px] text-ink-2 hover:bg-surface-2 hover:text-ink"
+            className="pressable flex min-h-9 items-center gap-1 px-1.5 text-[13px] text-accent-ink hover:underline"
           >
             <X size={14} aria-hidden />
             Clear

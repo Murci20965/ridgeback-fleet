@@ -5,84 +5,62 @@ import { useChatBridge } from "@/components/ChatBridge";
 import { Panel } from "@/components/Panel";
 import type { AttentionItem } from "@/lib/types";
 
-function AskButton({ item, onAsk }: { item: AttentionItem; onAsk: (question: string) => void }) {
-  const isCritical = item.severity === "critical";
-  return (
-    <button
-      onClick={() => onAsk(item.question)}
-      aria-label={`Ask the assistant: ${item.question}`}
-      title={item.question}
-      className={`pressable min-h-8 shrink-0 rounded-lg px-2 text-[13px] font-medium ${
-        isCritical
-          ? "text-critical-ink underline underline-offset-2 hover:bg-black/5"
-          : "text-accent-ink hover:bg-accent-wash"
-      }`}
-    >
-      Ask
-    </button>
-  );
-}
-
 export function AttentionList({ items }: { items: AttentionItem[] }) {
   const { askChat } = useChatBridge();
-  const critical = items.filter((item) => item.severity === "critical");
-  const warnings = items.filter((item) => item.severity === "warning");
+  const criticalCount = items.filter((item) => item.severity === "critical").length;
 
   return (
     <Panel
       title="Needs attention"
       subtitle="What to look at first this morning"
       aside={
-        critical.length > 0 && (
-          <span className="shrink-0 rounded-full bg-critical-wash px-2 py-0.5 text-xs font-medium text-critical-ink">
-            {critical.length} critical
+        criticalCount > 0 && (
+          <span className="shrink-0 pt-1 text-xs font-medium text-critical">
+            {criticalCount} critical
           </span>
         )
       }
     >
       {items.length === 0 ? (
         <p className="flex items-center gap-2 text-sm text-ink-2">
-          <CircleCheck size={16} className="text-good" aria-hidden />
+          <CircleCheck size={16} aria-hidden />
           Nothing needs attention for this view.
         </p>
       ) : (
-        <>
-          {critical.length > 0 && (
-            <ul className="mb-1.5 grid gap-1.5">
-              {critical.map((item) => (
-                <li
-                  key={`${item.kind}-${item.title}`}
-                  className="flex items-start gap-2.5 rounded-xl bg-critical-wash p-2.5 text-critical-ink"
-                >
-                  <CircleAlert size={16} className="mt-0.5 shrink-0" aria-hidden />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-medium break-words">
-                      <span className="sr-only">Critical: </span>
-                      {item.title}
-                    </p>
-                    <p className="text-xs">{item.detail}</p>
-                  </div>
-                  <AskButton item={item} onAsk={askChat} />
-                </li>
-              ))}
-            </ul>
-          )}
-          <ul className="divide-y divide-line">
-            {warnings.map((item) => (
-              <li key={`${item.kind}-${item.title}`} className="flex items-start gap-2.5 px-2.5 py-2">
-                <TriangleAlert size={16} className="mt-0.5 shrink-0 text-warning" aria-hidden />
+        <ul className="divide-y divide-line">
+          {items.map((item) => {
+            const isCritical = item.severity === "critical";
+            const Icon = isCritical ? CircleAlert : TriangleAlert;
+            return (
+              <li
+                key={`${item.kind}-${item.title}`}
+                className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+              >
+                <Icon
+                  size={16}
+                  strokeWidth={1.75}
+                  className={`mt-0.5 shrink-0 ${isCritical ? "text-critical" : "text-muted"}`}
+                  aria-hidden
+                />
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-medium break-words">
-                    <span className="sr-only">Check: </span>
+                    <span className="sr-only">{isCritical ? "Critical" : "Check"}: </span>
                     {item.title}
                   </p>
-                  <p className="text-xs text-ink-2">{item.detail}</p>
+                  <p className="mt-0.5 text-xs text-ink-2">{item.detail}</p>
                 </div>
-                <AskButton item={item} onAsk={askChat} />
+                <button
+                  onClick={() => askChat(item.question)}
+                  aria-label={`Ask the assistant: ${item.question}`}
+                  title={item.question}
+                  className="pressable -my-1 min-h-8 shrink-0 text-[13px] text-accent-ink hover:underline"
+                >
+                  Ask
+                </button>
               </li>
-            ))}
-          </ul>
-        </>
+            );
+          })}
+        </ul>
       )}
     </Panel>
   );
