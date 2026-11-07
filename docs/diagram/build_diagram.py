@@ -14,60 +14,62 @@ from html import escape
 from pathlib import Path
 
 DOCS = Path(__file__).resolve().parents[1]
-WIDTH, HEIGHT = 1600, 900
+WIDTH, HEIGHT = 1920, 1080
 TITLE = "Ridgeback fleet data: production solution design"
 
 INK = "#1d1d1f"
-INK_2 = "#515154"
-LINE = "#6e6e73"
-LANE_FILL = "#f5f5f7"
-PAGE_TITLE_SIZE = 26
-LANE_TITLE_SIZE = 20
-TITLE_SIZE = 19
-BODY_SIZE = 16
-LABEL_SIZE = 13
-LINE_HEIGHT = 20
-BODY_INSET = 14
+INK_2 = "#3a3a3c"
+LINE = "#48484a"
+LANE_FILL = "#eeeef2"
+CARD_STROKE = "#86868b"
+STROKE_WIDTH = 2
+PAGE_TITLE_SIZE = 32
+LANE_TITLE_SIZE = 25
+TITLE_SIZE = 23
+BODY_SIZE = 19
+LABEL_SIZE = 16
+LINE_HEIGHT = 25
+BODY_INSET = 20
 
 # Fill, stroke, title colour, body colour. One blue marks the LLM, and red marks what goes wrong.
 STYLES = {
-    "plain": ("#ffffff", "#d2d2d7", INK, INK_2),
-    "store": ("#e8e8ed", "#c7c7cc", INK, INK_2),
-    "llm": ("#e8f2fd", "#0071e3", "#0058b0", INK_2),
+    "plain": ("#ffffff", CARD_STROKE, INK, INK_2),
+    "store": ("#dcdce2", CARD_STROKE, INK, INK),
+    "llm": ("#dcebfc", "#0071e3", "#0058b0", INK),
     "fail": ("#ffffff", "#d70015", "#b00012", INK_2),
-    "secret": (INK, INK, INK, "#f5f5f7"),
+    "secret": (INK, INK, INK, "#ffffff"),
 }
 
 # title, x, y, width, height
 LANES = [
-    ("Ingest: runs unattended every morning", 20, 72, 1560, 126),
-    ("Store", 20, 232, 1560, 106),
-    ("Serve: dashboard and chat", 20, 372, 1560, 296),
-    ("When files are late, missing or corrupt", 20, 700, 1560, 186),
+    ("Ingest: runs unattended every morning", 20, 98, 1880, 172),
+    ("Store", 20, 318, 1880, 142),
+    ("Serve: dashboard and chat", 20, 508, 1880, 344),
+    ("When files are late, missing or corrupt", 20, 900, 1880, 168),
 ]
 
 # id, style, x, y, width, height, title, lines
 NODES = [
-    ("provider", "plain", 40, 108, 230, 80, "Telematics provider", ["Sends yesterday's events", "as a CSV at 04:00"]),
-    ("sftp", "plain", 300, 108, 230, 80, "SFTP folder", ["Client's folder", "Stands in for data/incoming", "in this build"]),
-    ("runner", "plain", 560, 108, 310, 80, "Scheduled runner", ["GitHub Actions cron, 04:00 SAST", "Retries hourly until 07:00", "Option: n8n Schedule trigger"]),
-    ("pipeline", "plain", 900, 108, 310, 80, "Python pipeline", ["Cleans rows, oldest file first", "One transaction per file", "Safe to rerun: unique event keys"]),
-    ("alert", "fail", 1240, 108, 320, 80, "Alerts", ["Email or Slack webhook", "On failed, partial or missing files"]),
-    ("archive", "store", 40, 268, 360, 60, "Object storage (production)", ["Raw files kept as delivered", "Bad files moved to quarantine"]),
-    ("db", "store", 430, 268, 640, 60, "Neon Postgres", ["telemetry_events, machines, drivers, branches", "Views: v_machine_daily_hours, v_driver_events, v_branch_daily"]),
-    ("log", "store", 1100, 268, 460, 60, "Run log", ["Postgres ingest_runs: file, rows loaded, rejected, outcome", "Postgres rejected_rows: raw row and the reason"]),
-    ("browser", "plain", 40, 408, 200, 196, "Operations manager", ["Browser on phone,", "tablet or desktop"]),
-    ("web", "plain", 290, 408, 260, 80, "Next.js on Vercel", ["Dashboard and chat UI", "No secrets, no database"]),
-    ("dashapi", "plain", 600, 408, 300, 80, "FastAPI: /api/v1/dashboard", ["Runs shared SQL queries", "On each page view, cached 60s"]),
-    ("llm", "llm", 950, 408, 280, 80, "OpenRouter (LLM call)", ["Claude Haiku 5.5, then fallback", "Called only from FastAPI", "Spend cap on the key"]),
-    ("chatapi", "plain", 290, 524, 260, 80, "FastAPI: /api/v1/chat", ["Rate limit, length limit", "Tool loop, 5 rounds at most", "Runs when a question is sent"]),
-    ("tools", "store", 600, 524, 300, 80, "Typed read-only tools", ["Run hours, events, fleet, coverage", "Validated, parameterised SQL", "No free-form SQL"]),
-    ("guard", "plain", 950, 524, 280, 80, "Answer guard", ["Figure not in a tool result:", "one retry, then withheld"]),
-    ("secrets", "secret", 1270, 408, 290, 244, "Where secrets live", ["Vercel env vars:", "OPENROUTER_API_KEY", "DATABASE_URL (read-only role)", "", "GitHub Actions secret:", "DATABASE_URL (owner role)", "", "Never in the repo or browser"]),
-    ("late", "fail", 40, 736, 365, 140, "Late data", ["A row keeps its event date, wherever", "it arrives, up to 7 days old", "Resent rows hit the unique key,", "so they load once", "A late file loads on the next retry", "Older rows are rejected with a reason"]),
-    ("missing", "fail", 425, 736, 365, 140, "Missing file", ["No file by 07:00: alert the", "on-call contact", "A gap between delivery dates is logged", "Dashboard shows the last loaded date", "Chat states which dates it covers", "Backfills load in date order"]),
-    ("corrupt", "fail", 810, 736, 365, 140, "Corrupt file", ["Empty, not UTF-8 or missing a column:", "roll back only that file, log failed", "Later files still load", "The run exits non-zero and alerts", "The file is quarantined, and a", "corrected copy reloads automatically"]),
-    ("badrow", "fail", 1195, 736, 365, 140, "Bad rows in a good file", ["Stored in rejected_rows with a reason", "Good rows still load", "Truncated file: outcome is partial,", "flagged on the dashboard", "Unknown machine: held until it's on", "the list, then reprocessed"]),
+    ("provider", "plain", 40, 144, 320, 110, "Telematics provider", ["Sends yesterday's events", "as a CSV at 04:00"]),
+    ("sftp", "plain", 420, 144, 320, 110, "SFTP folder", ["Client's folder", "Stands in for data/incoming", "in this build"]),
+    ("runner", "plain", 800, 144, 320, 110, "Scheduled runner", ["GitHub Actions cron, 04:00 SAST", "Retries hourly until 07:00", "Option: n8n Schedule trigger"]),
+    ("pipeline", "plain", 1180, 144, 320, 110, "Python pipeline", ["Cleans rows, oldest file first", "One transaction per file", "Safe to rerun: unique event keys"]),
+    ("alert", "fail", 1560, 144, 320, 110, "Alerts", ["Email or Slack webhook", "Failed, partial or missing files"]),
+    ("archive", "store", 40, 364, 460, 80, "Object storage (production)", ["Raw files kept as delivered", "Bad files moved to quarantine"]),
+    ("db", "store", 540, 364, 780, 80, "Neon Postgres", ["telemetry_events, machines, drivers, branches", "Views: v_machine_daily_hours, v_driver_events, v_branch_daily"]),
+    ("log", "store", 1360, 364, 520, 80, "Run log", ["Postgres ingest_runs: file, rows, outcome", "Postgres rejected_rows: raw row and reason"]),
+    ("browser", "plain", 40, 554, 240, 206, "Operations manager", ["Browser on phone,", "tablet or desktop"]),
+    ("web", "plain", 370, 554, 320, 80, "Next.js on Vercel", ["Dashboard and chat UI", "No secrets, no database"]),
+    ("dashapi", "plain", 760, 554, 350, 80, "FastAPI: /api/v1/dashboard", ["Runs shared SQL queries", "On each page view, cached 60s"]),
+    ("llm", "llm", 1190, 554, 320, 80, "OpenRouter (LLM call)", ["Claude Haiku 5.5, with fallback", "Called only from FastAPI"]),
+    ("chatapi", "plain", 370, 680, 320, 80, "FastAPI: /api/v1/chat", ["Rate and length limits", "Tool loop, 5 rounds at most"]),
+    ("tools", "store", 760, 680, 350, 80, "Typed read-only tools", ["Run hours, events, fleet, coverage", "Parameterised SQL, none free-form"]),
+    ("guard", "plain", 1190, 680, 320, 80, "Answer guard", ["Figure not in a tool result:", "one retry, then withheld"]),
+    ("secrets", "secret", 1580, 554, 300, 286, "Where secrets live", ["Vercel env vars:", "OPENROUTER_API_KEY", "DATABASE_URL (read-only)", "The key has a spend cap", "", "GitHub Actions secret:", "DATABASE_URL (owner)", "", "Never in the repo or browser"]),
+    ("late", "fail", 40, 946, 437, 106, "Late data", ["Rows keep their event date, up to 7 days old", "Resent rows load once, by unique key", "A late file loads on the next retry"]),
+    ("missing", "fail", 507, 946, 437, 106, "Missing file", ["No file by 07:00 alerts the on-call contact", "Gaps between delivery dates are logged", "Dashboard and chat show the dates covered"]),
+    ("corrupt", "fail", 974, 946, 437, 106, "Corrupt file", ["Rolls back that file only, and logs it failed", "Later files still load, and the run alerts", "Quarantined until a corrected copy arrives"]),
+    ("badrow", "fail", 1443, 946, 437, 106, "Bad rows in a good file", ["Stored in rejected_rows with a reason", "Good rows load; truncated means partial", "Unknown machines held until listed"]),
 ]
 
 NODE_BY_ID = {node[0]: node for node in NODES}
@@ -80,55 +82,47 @@ STRAIGHT = [
     ("pipeline", "alert"),
     ("web", "dashapi"),
     ("chatapi", "tools"),
-    ("llm", "guard"),
 ]
 
 # Connectors placed by hand, to stay clear of titles and other lines.
 # source, target, points from start to end, dashed
 ROUTED = [
-    ("sftp", "archive", [(350, 188), (350, 268)], False),
-    ("pipeline", "db", [(985, 188), (985, 268)], False),
-    ("pipeline", "log", [(1190, 188), (1190, 268)], False),
-    ("browser", "web", [(240, 448), (290, 448)], False),
-    ("browser", "chatapi", [(240, 545), (290, 545)], False),
-    ("chatapi", "browser", [(290, 585), (240, 585)], False),
-    ("dashapi", "db", [(880, 408), (880, 328)], False),
-    ("tools", "db", [(900, 564), (925, 564), (925, 328)], True),
-    ("chatapi", "llm", [(370, 604), (370, 644), (1250, 644), (1250, 448), (1230, 448)], False),
-    ("guard", "chatapi", [(1090, 604), (1090, 620), (470, 620), (470, 604)], False),
+    ("sftp", "archive", [(460, 254), (460, 364)], False),
+    ("pipeline", "db", [(1240, 254), (1240, 364)], False),
+    ("pipeline", "log", [(1480, 254), (1480, 364)], False),
+    ("browser", "web", [(280, 594), (370, 594)], False),
+    ("browser", "chatapi", [(280, 700), (370, 700)], False),
+    ("chatapi", "browser", [(370, 740), (280, 740)], False),
+    ("dashapi", "db", [(1095, 554), (1095, 444)], False),
+    ("tools", "db", [(1110, 720), (1150, 720), (1150, 444)], True),
+    ("llm", "guard", [(1400, 634), (1400, 680)], False),
+    ("chatapi", "llm", [(450, 760), (450, 818), (1545, 818), (1545, 594), (1510, 594)], False),
+    ("guard", "chatapi", [(1350, 760), (1350, 782), (590, 782), (590, 760)], False),
 ]
 
 # x, baseline y, text
 LABELS = [
-    (410, 224, "copy of raw file"),
-    (1030, 224, "loads events"),
-    (1235, 224, "logs each run"),
-    (902, 360, "SQL"),
-    (975, 360, "read-only SQL"),
-    (265, 442, "opens"),
-    (265, 539, "asks"),
-    (265, 579, "answer"),
-    (575, 442, "fetch"),
-    (575, 558, "tool"),
-    (1140, 510, "draft answer"),
-    (780, 636, "checked answer, or a clear 'the data can't answer'"),
-    (810, 660, "asks model, sending the tool results"),
+    (530, 300, "copy of raw file"),
+    (1300, 300, "loads events"),
+    (1545, 300, "logs each run"),
+    (1122, 490, "SQL"),
+    (1212, 490, "read-only SQL"),
+    (325, 586, "opens"),
+    (325, 692, "asks"),
+    (325, 732, "answer"),
+    (725, 586, "fetch"),
+    (725, 712, "tool"),
+    (1465, 662, "draft answer"),
+    (970, 803, "checked answer, or a clear 'the data can't answer'"),
+    (1000, 839, "asks model, sending the tool results"),
 ]
 
 
 def facing_points(source: tuple, target: tuple) -> list[tuple[float, float]]:
-    """Connect the facing edges of two boxes, in whichever direction separates them more."""
+    """Connect the facing edges of two boxes, side by side at their vertical centres."""
     _, _, sx, sy, sw, sh, *_ = source
-    _, _, tx, ty, tw, th, *_ = target
-    scy, tcy = sy + sh / 2, ty + th / 2
-    if tx >= sx + sw:
-        return [(sx + sw, scy), (tx, tcy)]
-    if tx + tw <= sx:
-        return [(sx, scy), (tx + tw, tcy)]
-    x = (max(sx, tx) + min(sx + sw, tx + tw)) / 2
-    if ty >= sy + sh:
-        return [(x, sy + sh), (x, ty)]
-    return [(x, sy), (x, ty + th)]
+    _, _, tx, ty, _, th, *_ = target
+    return [(sx + sw, sy + sh / 2), (tx, ty + th / 2)]
 
 
 def all_connectors() -> list[tuple[str, str, list[tuple[float, float]], bool]]:
@@ -143,29 +137,29 @@ def build_svg() -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}" font-family="Segoe UI, Arial, sans-serif">',
-        f'<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" '
-        f'markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9z" fill="{LINE}"/></marker></defs>',
+        f'<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" '
+        f'markerHeight="5.5" orient="auto"><path d="M1 1L9 5L1 9z" fill="{LINE}"/></marker></defs>',
         f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#ffffff"/>',
-        f'<text x="20" y="34" font-size="{PAGE_TITLE_SIZE}" font-weight="600" fill="{INK}">'
+        f'<text x="20" y="44" font-size="{PAGE_TITLE_SIZE}" font-weight="600" fill="{INK}">'
         f"{escape(TITLE)}</text>",
     ]
     for title, x, y, w, h in LANES:
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="14" fill="{LANE_FILL}"/>')
+        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="16" fill="{LANE_FILL}"/>')
         parts.append(
-            f'<text x="{x}" y="{y - 8}" font-size="{LANE_TITLE_SIZE}" font-weight="600" '
+            f'<text x="{x}" y="{y - 10}" font-size="{LANE_TITLE_SIZE}" font-weight="600" '
             f'fill="{INK}">{escape(title)}</text>'
         )
     for _, style, x, y, w, h, title, lines in NODES:
         fill, stroke, title_colour, body_colour = STYLES[style]
         parts.append(
-            f'<text x="{x}" y="{y - 8}" font-size="{TITLE_SIZE}" font-weight="600" '
+            f'<text x="{x}" y="{y - 10}" font-size="{TITLE_SIZE}" font-weight="600" '
             f'fill="{title_colour}">{escape(title)}</text>'
         )
         parts.append(
             f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="{fill}" '
-            f'stroke="{stroke}" stroke-width="1"/>'
+            f'stroke="{stroke}" stroke-width="{STROKE_WIDTH}"/>'
         )
-        top = y + (h - LINE_HEIGHT * len(lines)) / 2 + 15
+        top = y + (h - LINE_HEIGHT * len(lines)) / 2 + 18
         for index, line in enumerate(lines):
             parts.append(
                 f'<text x="{x + BODY_INSET}" y="{top + LINE_HEIGHT * index}" '
@@ -173,9 +167,9 @@ def build_svg() -> str:
             )
     for _, _, points, dashed in all_connectors():
         path = " ".join(f"{'M' if i == 0 else 'L'} {x} {y}" for i, (x, y) in enumerate(points))
-        dash = ' stroke-dasharray="5 4"' if dashed else ""
+        dash = ' stroke-dasharray="7 5"' if dashed else ""
         parts.append(
-            f'<path d="{path}" fill="none" stroke="{LINE}" stroke-width="1.5"{dash} '
+            f'<path d="{path}" fill="none" stroke="{LINE}" stroke-width="{STROKE_WIDTH}"{dash} '
             'marker-end="url(#a)"/>'
         )
     for x, y, text in LABELS:
@@ -202,7 +196,7 @@ def _title_style(size: int, colour: str) -> str:
 
 def build_drawio() -> str:
     cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>']
-    cells.append(_text_cell("title", TITLE, 20, 10, 900, 32, _title_style(PAGE_TITLE_SIZE, INK)))
+    cells.append(_text_cell("title", TITLE, 20, 12, 1200, 42, _title_style(PAGE_TITLE_SIZE, INK)))
     for index, (title, x, y, w, h) in enumerate(LANES):
         style = f"rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor={LANE_FILL};strokeColor=none;"
         cells.append(
@@ -210,18 +204,18 @@ def build_drawio() -> str:
             f'<mxGeometry x="{x}" y="{y}" width="{w}" height="{h}" as="geometry"/></mxCell>'
         )
         cells.append(
-            _text_cell(f"lanetitle{index}", title, x, y - 30, w, 26, _title_style(LANE_TITLE_SIZE, INK))
+            _text_cell(f"lanetitle{index}", title, x, y - 38, w, 32, _title_style(LANE_TITLE_SIZE, INK))
         )
     for node_id, node_style, x, y, w, h, title, lines in NODES:
         fill, stroke, title_colour, body_colour = STYLES[node_style]
         cells.append(
-            _text_cell(f"{node_id}title", title, x, y - 28, w, 26, _title_style(TITLE_SIZE, title_colour))
+            _text_cell(f"{node_id}title", title, x, y - 36, w, 30, _title_style(TITLE_SIZE, title_colour))
         )
         text = "<br>".join(escape(line) for line in lines)
         style = (
             f"rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor={fill};strokeColor={stroke};"
-            f"fontSize={BODY_SIZE};fontColor={body_colour};align=left;verticalAlign=middle;"
-            f"spacingLeft={BODY_INSET - 2};"
+            f"strokeWidth={STROKE_WIDTH};fontSize={BODY_SIZE};fontColor={body_colour};align=left;"
+            f"verticalAlign=middle;spacingLeft={BODY_INSET - 2};"
         )
         cells.append(
             f'<mxCell id="{node_id}" value="{escape(text, quote=True)}" style="{style}" '
@@ -234,8 +228,9 @@ def build_drawio() -> str:
         start, end = points[0], points[-1]
         style = (
             f"edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor={LINE};"
-            f"strokeWidth=1.5;exitX={(start[0] - sx) / sw:.4f};exitY={(start[1] - sy) / sh:.4f};"
-            f"exitDx=0;exitDy=0;entryX={(end[0] - tx) / tw:.4f};entryY={(end[1] - ty) / th:.4f};"
+            f"strokeWidth={STROKE_WIDTH};exitX={(start[0] - sx) / sw:.4f};"
+            f"exitY={(start[1] - sy) / sh:.4f};exitDx=0;exitDy=0;"
+            f"entryX={(end[0] - tx) / tw:.4f};entryY={(end[1] - ty) / th:.4f};"
             f"entryDx=0;entryDy=0;{'dashed=1;' if dashed else ''}"
         )
         middle = "".join(f'<mxPoint x="{x}" y="{y}"/>' for x, y in points[1:-1])
@@ -246,10 +241,10 @@ def build_drawio() -> str:
             f"{waypoints}</mxGeometry></mxCell>"
         )
     for index, (x, y, text) in enumerate(LABELS):
-        width = 8 * len(text)
+        width = 10 * len(text)
         cells.append(
             _text_cell(
-                f"label{index}", text, x - width / 2, y - 14, width, 18,
+                f"label{index}", text, x - width / 2, y - 17, width, 22,
                 f"align=center;verticalAlign=middle;fontSize={LABEL_SIZE};fontColor={INK_2};",
             )
         )
