@@ -43,9 +43,9 @@ export function DriverTable({ drivers }: { drivers: DriverRow[] }) {
             <thead>
               <tr>
                 <th scope="col" className={`${heading} text-left`}>Driver</th>
-                <th scope="col" className={`${heading} text-right`}>Impacts</th>
-                <th scope="col" className={`${heading} text-right`}>Harsh</th>
-                <th scope="col" className={`${heading} text-right`}>Idle</th>
+                <th scope="col" className={`${heading} pl-3 text-right`}>Impacts</th>
+                <th scope="col" className={`${heading} pl-3 text-right`}>Harsh</th>
+                <th scope="col" className={`${heading} pl-3 text-right`}>Idle</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line border-t border-line">
