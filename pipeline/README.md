@@ -70,7 +70,7 @@ flowchart TD
 
 A file fails if its name doesn't match the expected pattern, it's empty or isn't valid UTF-8, a required column is missing, or no row is usable.
 
-**Missing days.** A gap between delivery dates is logged as `deliveries_missing`. Sending an alert on this is part of the [production design](solution_design.md) rather than this build.
+**Missing days.** A gap between delivery dates is logged as `deliveries_missing`. Sending an alert on this is part of the [production design](../docs/solution_design.png) rather than this build.
 
 ## Test it
 
