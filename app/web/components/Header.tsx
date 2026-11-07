@@ -39,14 +39,21 @@ function DataStatus({ pipeline }: { pipeline: PipelineStatus | null }) {
 
 export function Header({ pipeline }: { pipeline: PipelineStatus | null }) {
   return (
-    <header className="flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <h1 className="text-xl font-semibold tracking-tight">Ridgeback fleet</h1>
-        <p className="mt-0.5 text-[13px] text-ink-2">
-          <DataStatus pipeline={pipeline} />
-        </p>
-      </div>
-      <ThemeToggle />
+    <header className="sticky top-0 z-30 h-14 shrink-0 border-b border-line bg-surface">
+      <nav
+        aria-label="Main"
+        className="mx-auto flex h-full w-full max-w-[1480px] items-center justify-between gap-3 px-4 lg:px-5"
+      >
+        <div className="min-w-0">
+          <h1 className="truncate text-base leading-tight font-semibold tracking-tight">
+            Ridgeback fleet
+          </h1>
+          <p className="truncate text-xs text-ink-2">
+            <DataStatus pipeline={pipeline} />
+          </p>
+        </div>
+        <ThemeToggle />
+      </nav>
     </header>
   );
 }

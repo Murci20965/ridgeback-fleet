@@ -45,7 +45,7 @@ export function FilterBar({ coverage }: { coverage: Coverage }) {
   return (
     <section
       aria-label="Filters"
-      className="sticky top-0 z-20 -mx-4 mt-3 flex flex-wrap items-center gap-2 bg-page px-4 py-2 lg:mx-0 lg:px-0"
+      className="-mx-4 flex flex-wrap items-center gap-2 bg-page px-4 py-2 lg:sticky lg:top-0 lg:z-20 lg:mx-0 lg:px-0 lg:pt-0"
     >
       <div className="flex max-w-full gap-0.5 overflow-x-auto rounded-xl border border-line bg-surface p-1 [scrollbar-width:none]">
         <Pill active={!filters.day} onClick={() => setFilter("day", null)}>
