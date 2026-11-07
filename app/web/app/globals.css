@@ -131,6 +131,31 @@ textarea:focus-visible,
   box-shadow: var(--card-shadow);
 }
 
+/* The welcome page's logo animation. These rules only apply while it plays, so the card
+   shows normally when it's skipped, already seen, or JavaScript is off. */
+.intro-logo {
+  display: none;
+}
+[data-intro="play"] .intro-logo {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 63px;
+  margin: -31.5px 0 0 -28px;
+  pointer-events: none;
+}
+.intro-logo rect {
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+[data-intro="play"] .intro-card,
+[data-intro="play"] .intro-photo,
+[data-intro="play"] .intro-target {
+  opacity: 0;
+}
+
 /* Sections rise in once on first load. Filter changes keep them in place, so this can't
    get in the way of repeated use. */
 @keyframes rise {

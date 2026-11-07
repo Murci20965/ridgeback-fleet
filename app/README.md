@@ -8,7 +8,7 @@ Next.js only displays data. All database access, business logic and LLM calls ar
 
 | Address | Page |
 | --- | --- |
-| `/` | Welcome page with a button through to the dashboard. It isn't a sign-in. Old links with filters redirect to the dashboard |
+| `/` | Welcome page with a short logo animation and a button through to the dashboard. The animation plays once per browser session, and any click or key skips it. It isn't a sign-in. Old links with filters redirect to the dashboard |
 | `/dashboard` | The dashboard and chat. Filters live in the URL, such as `?day=2026-09-08&branch=Riverside` |
 
 ## Headline
