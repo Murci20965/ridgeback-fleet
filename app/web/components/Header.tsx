@@ -46,11 +46,10 @@ export function Header({ pipeline }: { pipeline: PipelineStatus | null }) {
       >
         <div className="flex min-w-0 items-center gap-2.5">
           {/* The same mark as the tab icon. Theme colours make it follow the toggle here. */}
-          <svg viewBox="0 0 32 32" className="size-5 shrink-0" aria-hidden>
-            <rect width="32" height="32" rx="8" fill="var(--ink)" />
-            <rect x="8" y="17" width="4" height="8" rx="1" fill="var(--surface)" />
-            <rect x="14" y="12" width="4" height="13" rx="1" fill="var(--surface)" />
-            <rect x="20" y="7" width="4" height="18" rx="1" fill="var(--surface)" />
+          <svg viewBox="6 5 20 22" className="size-5 shrink-0" fill="var(--ink)" aria-hidden>
+            <rect x="8" y="17" width="4" height="8" rx="1" />
+            <rect x="14" y="12" width="4" height="13" rx="1" />
+            <rect x="20" y="7" width="4" height="18" rx="1" />
           </svg>
           <h1 className="shrink-0 text-[15px] font-semibold tracking-tight">Ridgeback fleet</h1>
           <p className="min-w-0 truncate text-xs text-ink-2">
