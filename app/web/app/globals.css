@@ -154,6 +154,13 @@ textarea:focus-visible,
 [data-intro="play"] .intro-photo,
 [data-intro="play"] .intro-target {
   opacity: 0;
+  /* If the script behind the animation ever fails, the way in still appears. */
+  animation: intro-failsafe 1ms 5s forwards;
+}
+@keyframes intro-failsafe {
+  to {
+    opacity: 1;
+  }
 }
 
 /* Sections rise in once on first load. Filter changes keep them in place, so this can't
