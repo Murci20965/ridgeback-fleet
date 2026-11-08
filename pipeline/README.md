@@ -1,6 +1,6 @@
 # Pipeline
 
-Loads each daily telemetry file into Postgres, cleaning it on the way. It runs every morning at 04:00 SAST through [GitHub Actions](../.github/workflows/ingest.yml).
+Loads each daily telemetry file into Postgres, cleaning it on the way. It runs every morning at 04:07 SAST through [GitHub Actions](../.github/workflows/ingest.yml), with backup runs at 04:37, 05:37 and 06:37. GitHub delays or drops scheduled runs under load, worst on the hour, and it dropped the first run at 04:00. A backup that finds nothing new loads nothing.
 
 | File | What it does |
 | --- | --- |
@@ -74,7 +74,7 @@ A file fails if its name doesn't match the expected pattern, it's empty or isn't
 
 ## Weekly report
 
-`weekly_report.py` publishes a summary of the latest Monday-to-Sunday week. [GitHub Actions](../.github/workflows/weekly-report.yml) runs it every Monday at 07:00 SAST, three hours after the load that delivers Sunday's events. The app shows it at `/report`, where it can be saved as a PDF.
+`weekly_report.py` publishes a summary of the latest Monday-to-Sunday week. [GitHub Actions](../.github/workflows/weekly-report.yml) runs it every Monday at 07:07 SAST, after the last ingest backup, with a backup run at 08:07. The app shows it at `/report`, where it can be saved as a PDF.
 
 ```bash
 pip install -r app/api/requirements.txt

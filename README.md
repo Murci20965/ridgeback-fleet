@@ -57,7 +57,7 @@ python -m venv .venv
 .venv/Scripts/python pipeline/run.py
 ```
 
-It loads each file in `data/incoming/` in date order, and running it again changes nothing. Add `--force` to reprocess every file with the same result. In production it's triggered by [`ingest.yml`](.github/workflows/ingest.yml) at 04:00 SAST, which can also be run by hand from the Actions tab. See the [pipeline README](pipeline/README.md) for behaviour, tests and troubleshooting.
+It loads each file in `data/incoming/` in date order, and running it again changes nothing. Add `--force` to reprocess every file with the same result. In production it's triggered by [`ingest.yml`](.github/workflows/ingest.yml) at 04:07 SAST, with backup runs until 06:37 because GitHub can drop scheduled runs. It can also be run by hand from the Actions tab. See the [pipeline README](pipeline/README.md) for behaviour, tests and troubleshooting.
 
 ## Model used and why
 

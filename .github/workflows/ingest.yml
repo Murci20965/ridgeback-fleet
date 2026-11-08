@@ -2,8 +2,13 @@ name: Daily ingest
 
 on:
   schedule:
-    # 02:00 UTC is 04:00 SAST. GitHub can start scheduled runs late under load.
-    - cron: "0 2 * * *"
+    # 02:07 UTC is 04:07 SAST. GitHub delays or drops scheduled runs under load, worst at the
+    # start of the hour, and dropped the first run at 02:00. The later runs are backups until
+    # 07:00 SAST. A run that finds nothing new loads nothing, so they cost seconds.
+    - cron: "7 2 * * *"
+    - cron: "37 2 * * *"
+    - cron: "37 3 * * *"
+    - cron: "37 4 * * *"
   workflow_dispatch:
     inputs:
       force:

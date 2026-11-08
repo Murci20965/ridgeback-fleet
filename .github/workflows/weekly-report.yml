@@ -2,8 +2,11 @@ name: Weekly report
 
 on:
   schedule:
-    # 05:00 UTC on Monday is 07:00 SAST, three hours after the load that delivers Sunday's events.
-    - cron: "0 5 * * 1"
+    # 05:07 UTC on Monday is 07:07 SAST, after the last ingest backup at 06:37 SAST. It's off the
+    # hour because GitHub drops runs under load. The 06:07 UTC run is a backup, and it does
+    # nothing if the figures haven't changed, or rewrites the report if late data arrived.
+    - cron: "7 5 * * 1"
+    - cron: "7 6 * * 1"
   workflow_dispatch:
     inputs:
       force:
