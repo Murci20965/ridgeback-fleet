@@ -14,7 +14,15 @@ import main
 from agent import unknown_references
 from dashboard import build_dashboard
 from llm import LLMError
-from report import build_facts, facts_checksum, problems_in, publish_report, write_commentary
+from report import (
+    build_facts,
+    crowded_points,
+    facts_checksum,
+    has_several_sentences,
+    problems_in,
+    publish_report,
+    write_commentary,
+)
 from schemas import Commentary
 
 FACTS = {
@@ -96,6 +104,46 @@ class TestCommentary:
     def test_a_model_failure_gives_no_commentary(self):
         llm = ScriptedLLM(LLMError("busy"))
         assert write_commentary(llm, FACTS) == (None, None)
+
+
+class TestOneItemPerPoint:
+    # The check the live report actually produced on 8 Nov 2026.
+    JOINED = (
+        "Check P57083, which didn't run this week, and confirm whether it is still in use. "
+        "Fri 11 Sep's file was cut off, so hours that day may read low."
+    )
+
+    def test_two_sentences_are_caught(self):
+        assert has_several_sentences(self.JOINED)
+
+    @pytest.mark.parametrize(
+        "point",
+        [
+            "Review the impacts.",
+            "Review the impacts",
+            "FBA33639374813 logged the most run hours (61.06).",
+            "Harbour recorded 301.4 run hours, the most of any branch.",
+            "Fri 11 Sep's file was cut off, so hours that day may read low.",
+            "Tue 8 Sep had the most impacts, with 33.",
+            "  Check R88897's assigned branch.  ",
+        ],
+    )
+    def test_one_sentence_passes(self, point):
+        assert not has_several_sentences(point)
+
+    def test_a_question_then_a_sentence_is_caught(self):
+        assert has_several_sentences("Is P57083 still in use? It didn't run this week.")
+
+    def test_crowded_points_lists_only_the_joined_ones(self):
+        commentary = Commentary(**{**GOOD, "checks": ["Review the impacts.", self.JOINED]})
+        assert crowded_points(commentary) == [self.JOINED]
+
+    def test_a_crowded_point_gets_a_retry(self):
+        crowded = {**GOOD, "checks": [self.JOINED]}
+        llm = ScriptedLLM(written(crowded), written(GOOD))
+        commentary, _ = write_commentary(llm, FACTS)
+        assert commentary.checks == GOOD["checks"]
+        assert "one sentence about one item" in llm.calls[1]["messages"][-1]["content"]
 
 
 class TestReferences:

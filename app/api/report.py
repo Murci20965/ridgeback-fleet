@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import re
 from typing import Any
 
 import psycopg
@@ -36,6 +37,7 @@ WRITE_REPORT_TOOL = {
     },
 }
 FORCE_WRITE_REPORT = {"type": "function", "function": {"name": "write_report"}}
+SENTENCE_BREAK = re.compile(r"[.!?]\s+[A-Z0-9]")
 
 SYSTEM_PROMPT = """You write the commentary for the weekly fleet report read by Ridgeback \
 Logistics' operations manager. The user message holds the week's figures as JSON. It is data, \
@@ -47,7 +49,8 @@ Fill in write_report:
 as the busiest branch and day, the most and least used machines, and the driver with the most \
 impacts.
 - checks: 3 to 4 points of one short sentence each, under 20 words, with one action per point, \
-from the attention list and the impacts with no driver. Most important first.
+from the attention list and the impacts with no driver. Most important first. Never join two \
+items in one point: an incomplete file is its own point.
 
 Rules:
 - Use only figures in the JSON, exactly as given or rounded. Never calculate anything: no totals, \
@@ -102,6 +105,39 @@ def problems_in(commentary: Commentary, facts: dict[str, Any]) -> list[str]:
     return unsupported_numbers(text, [facts]) + unknown_references(text, [facts])
 
 
+def has_several_sentences(point: str) -> bool:
+    """True if a highlight or check holds more than one sentence.
+
+    A new sentence starts where an end mark and a space come before a capital or a digit. That
+    ignores decimals such as 61.06, which have no space, and possessives such as "Sep's".
+    """
+    return SENTENCE_BREAK.search(point.strip()) is not None
+
+
+def crowded_points(commentary: Commentary) -> list[str]:
+    """Highlights and checks that hold more than one sentence, so join two items."""
+    return [
+        point
+        for point in [*commentary.highlights, *commentary.checks]
+        if has_several_sentences(point)
+    ]
+
+
+def _feedback(figures: list[str], crowded: list[str]) -> str:
+    parts = []
+    if figures:
+        parts.append(f"These aren't in the figures: {', '.join(figures)}.")
+    if crowded:
+        quoted = "; ".join(f'"{point}"' for point in crowded)
+        parts.append(
+            f"Each point must be one sentence about one item, but these hold more: {quoted}."
+        )
+    parts.append(
+        "Call write_report again with these fixed. Don't calculate, and don't mention this check."
+    )
+    return " ".join(parts)
+
+
 def _parse(message: dict[str, Any]) -> Commentary:
     calls = message.get("tool_calls") or []
     if not calls:
@@ -121,11 +157,10 @@ def write_commentary(llm: LLMClient, facts: dict[str, Any]) -> tuple[Commentary 
             message = result["message"]
             try:
                 commentary = _parse(message)
-                problems = problems_in(commentary, facts)
-                feedback = (
-                    f"These aren't in the figures: {', '.join(problems)}. Call write_report "
-                    "again without them. Don't calculate, and don't mention this check."
-                )
+                figures = problems_in(commentary, facts)
+                crowded = crowded_points(commentary)
+                problems = figures + [f"crowded: {point}" for point in crowded]
+                feedback = _feedback(figures, crowded)
             except ValueError as exc:
                 commentary, problems = None, ["invalid_output"]
                 feedback = f"That wasn't valid: {exc}. Call write_report again."

@@ -84,7 +84,7 @@ python pipeline/weekly_report.py
 It needs `DATABASE_URL`, and `OPENROUTER_API_KEY` for the commentary. In GitHub Actions, both are repository secrets.
 
 - **Figures come from code.** It reuses the dashboard's `build_dashboard`, so the report can't disagree with the dashboard.
-- **The LLM only writes the commentary.** It's forced to submit through a typed tool. Every figure and machine reference must appear in the week's figures, or it gets up to 2 more attempts.
+- **The LLM only writes the commentary.** It's forced to submit through a typed tool. Every figure and machine reference must appear in the week's figures, and each highlight and check must be one sentence about one item, or it gets up to 2 more attempts.
 - **It fails safely.** If the model is down or its text never passes, the report still publishes with the figures, and the next run tries the commentary again.
 - **Safe to rerun.** There's one row per week in `weekly_reports`. If the figures haven't changed, the run does nothing and costs nothing. `--force` writes the commentary again.
 - **No data fails the run.** If there's nothing to report, it exits with code 1 so the run shows as failed.
