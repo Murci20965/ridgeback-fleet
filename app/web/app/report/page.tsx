@@ -269,7 +269,7 @@ function Report({ report }: { report: WeeklyReport }) {
 
       <p className="mt-5 text-xs text-ink-2">
         Generated {generatedFormat.format(new Date(report.generated_at))} by the pipeline. It runs
-        every Monday at 07:00 and covers the latest full week of data.
+        every Monday at 07:07 SAST and covers the latest full week of data.
       </p>
     </article>
   );
@@ -288,7 +288,7 @@ export default async function ReportPage() {
           <div className="card p-8 text-center">
             <h2 className="font-medium">No report yet</h2>
             <p className="mt-1 text-sm text-ink-2">
-              The first report appears after the pipeline&apos;s Monday 07:00 run.
+              The first report appears after the pipeline&apos;s Monday 07:07 SAST run.
             </p>
           </div>
         )}

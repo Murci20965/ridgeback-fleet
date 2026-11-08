@@ -4,9 +4,9 @@ Usage:
     python pipeline/weekly_report.py           # skipped if this week's figures haven't changed
     python pipeline/weekly_report.py --force   # write the commentary again
 
-It runs every Monday at 07:00 SAST, after the 04:00 load has delivered Sunday's events. The
-report covers the latest Monday-to-Sunday week in the data. It shares its queries, LLM client
-and figure check with the API, so it needs app/api/requirements.txt.
+It runs every Monday at 07:07 SAST, after the 04:07 load and its backups have delivered
+Sunday's events. The report covers the latest Monday-to-Sunday week in the data. It shares its
+queries, LLM client and figure check with the API, so it needs app/api/requirements.txt.
 """
 
 from __future__ import annotations

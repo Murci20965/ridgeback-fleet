@@ -14,7 +14,7 @@ A daily pipeline, dashboard and chat assistant for Ridgeback's forklifts, reach 
 - [x] **Task 2.** Ingestion pipeline in [`pipeline/`](pipeline/README.md), scheduled by [GitHub Actions](.github/workflows/ingest.yml)
 - [x] **Task 3.** Hosted dashboard and chat in [`app/`](app/README.md), and [`docs/chat_results.md`](docs/chat_results.md) with 5 test questions and the answers
 - [x] **Task 4.** Solution design diagram in `docs/`, as the source file and a PNG
-- [x] **Stretch goal.** A [weekly report](pipeline/README.md#weekly-report) every Monday at 07:00, shown at `/report` and ready to save as a PDF
+- [x] **Stretch goal.** A [weekly report](pipeline/README.md#weekly-report) every Monday at 07:07 SAST, shown at `/report` and ready to save as a PDF
 - [x] No API keys in the repo or in front-end code
 - [x] The sections below are filled in
 
@@ -34,7 +34,7 @@ app/web/             Next.js: the dashboard, report and chat interface
 
 ```mermaid
 flowchart LR
-    A[Daily CSV files] -->|04:00 SAST, GitHub Actions| B[Python pipeline]
+    A[Daily CSV files] -->|04:07 SAST, GitHub Actions| B[Python pipeline]
     B -->|clean, load, log| C[(Neon Postgres)]
     C -->|views| D[FastAPI]
     D --> E[Next.js dashboard]
@@ -42,7 +42,7 @@ flowchart LR
     F <-->|server-side only| G[OpenRouter]
     E --> H[Operations manager]
     F --> H
-    I[Monday 07:00 SAST, GitHub Actions] --> J[Weekly report]
+    I[Monday 07:07 SAST, GitHub Actions] --> J[Weekly report]
     J -->|figures from the dashboard's code| C
     J <-->|commentary, checked| G
 ```

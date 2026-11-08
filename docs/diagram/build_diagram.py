@@ -55,7 +55,7 @@ LANES = [
 NODES = [
     ("provider", "plain", 40, 144, 320, 110, "Telematics provider", ["Sends yesterday's events", "as a CSV at 04:00"]),
     ("sftp", "plain", 420, 144, 320, 110, "SFTP folder", ["Client's folder", "Stands in for data/incoming", "in this build"]),
-    ("runner", "plain", 800, 144, 320, 110, "Scheduled runner", ["GitHub Actions cron or n8n, SAST", "Daily 04:00, retries until 07:00", "Monday 07:00: weekly report"]),
+    ("runner", "plain", 800, 144, 320, 110, "Scheduled runner", ["GitHub Actions cron or n8n, SAST", "Daily 04:07, backups until 06:37", "Monday 07:07: weekly report"]),
     ("pipeline", "plain", 1180, 144, 320, 110, "Python pipeline", ["Cleans rows, oldest file first", "One transaction per file", "Safe to rerun: unique event keys"]),
     ("alert", "fail", 1560, 144, 320, 110, "Alerts", ["Email or Slack webhook", "Failed, partial or missing files"]),
     ("archive", "store", 40, 364, 460, 80, "Object storage (production)", ["Raw files kept as delivered", "Bad files moved to quarantine"]),

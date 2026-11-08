@@ -22,8 +22,8 @@
 <text x="800" y="134" font-size="23" font-weight="600" fill="#1d1d1f">Scheduled runner</text>
 <rect x="800" y="144" width="320" height="110" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
 <text x="820" y="179.5" font-size="19" fill="#3a3a3c">GitHub Actions cron or n8n, SAST</text>
-<text x="820" y="204.5" font-size="19" fill="#3a3a3c">Daily 04:00, retries until 07:00</text>
-<text x="820" y="229.5" font-size="19" fill="#3a3a3c">Monday 07:00: weekly report</text>
+<text x="820" y="204.5" font-size="19" fill="#3a3a3c">Daily 04:07, backups until 06:37</text>
+<text x="820" y="229.5" font-size="19" fill="#3a3a3c">Monday 07:07: weekly report</text>
 <text x="1180" y="134" font-size="23" font-weight="600" fill="#1d1d1f">Python pipeline</text>
 <rect x="1180" y="144" width="320" height="110" rx="12" fill="#ffffff" stroke="#86868b" stroke-width="2"/>
 <text x="1200" y="179.5" font-size="19" fill="#3a3a3c">Cleans rows, oldest file first</text>
