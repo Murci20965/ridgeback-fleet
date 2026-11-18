@@ -5,7 +5,7 @@ A daily pipeline, dashboard and chat assistant for Ridgeback's forklifts, reach 
 | Item | Link |
 | --- | --- |
 | Live app | https://ridgeback-fleet-jet.vercel.app/ |
-| Walkthrough video | _Add after recording_ |
+| Walkthrough video | Shared in the submission email |
 | Solution design diagram | [`docs/solution_design.png`](docs/solution_design.png), source [`docs/solution_design.drawio`](docs/solution_design.drawio) |
 
 ## Checklist
